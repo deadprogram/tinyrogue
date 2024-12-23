@@ -18,10 +18,11 @@ func boot() {
 
 	floorImage := firefly.LoadFile("floor").Image()
 	game.Images["floor"] = &floorImage
+
 	wallImage := firefly.LoadFile("wall").Image()
 	game.Images["wall"] = &wallImage
 
-	game.SetData(tinyrogue.NewGameData(15, 15))
+	game.SetData(tinyrogue.NewGameData(15, 10))
 	game.SetMap(tinyrogue.NewGameMap())
 }
 
