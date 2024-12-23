@@ -5,9 +5,11 @@ import (
 )
 
 func TestLevel(t *testing.T) {
-	currentGameData = NewGameData(15, 15)
+	game := NewGame()
+	game.SetData(NewGameData(42, 24))
+	game.SetMap(NewGameMap())
 
-	level := NewLevel()
+	level := game.Map.CurrentLevel
 	if len(level.Rooms) == 0 {
 		t.Error("Failed to create level")
 	}

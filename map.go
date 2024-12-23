@@ -8,7 +8,7 @@ type GameMap struct {
 
 // NewGameMap creates a new set of maps for the entire game.
 // For now we will only create 1 map (default)
-func NewGameMap() GameMap {
+func NewGameMap() *GameMap {
 	l := NewLevel()
 	levels := make([]Level, 0)
 	levels = append(levels, l)
@@ -16,5 +16,5 @@ func NewGameMap() GameMap {
 	dungeons := make([]Dungeon, 0)
 	dungeons = append(dungeons, d)
 	gm := GameMap{Dungeons: dungeons, CurrentLevel: l}
-	return gm
+	return &gm
 }

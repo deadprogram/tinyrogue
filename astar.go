@@ -58,7 +58,7 @@ type AStar struct{}
 // GetPath takes a level, the starting position and an ending position (the goal) and returns
 // a list of Positions which is the path between the points.
 func (as AStar) GetPath(level Level, start *Position, end *Position) []Position {
-	gd := CurrentGameData()
+	gd := CurrentGame().Data
 
 	openList := make([]*node, 0)
 	closedList := make([]*node, 0)

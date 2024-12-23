@@ -3,6 +3,7 @@ package tinyrogue
 import (
 	"math"
 
+	"github.com/firefly-zero/firefly-go/firefly"
 	"github.com/norendren/go-fov/fov"
 )
 
@@ -13,33 +14,13 @@ const (
 	FLOOR
 )
 
-var floor *Image
-var wall *Image
-
-func loadTileImages() {
-	if floor != nil && wall != nil {
-		return
-	}
-	// var err error
-
-	// floor, _, err = ebitenutil.NewImageFromFile("assets/floor.png")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// wall, _, err = ebitenutil.NewImageFromFile("assets/wall.png")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-}
-
 // Each of the map tiles will be represented  by one of these structures
 type MapTile struct {
 	PixelX     int // Upper left corner of the tile
 	PixelY     int
-	Blocked    bool   // The tile should block the player or monster ?
-	Image      *Image // Pointer to an Image
-	IsRevealed bool   // Has the tile has, at one time, been revealed to us by FoV?
+	Blocked    bool           // The tile should block the player or monster ?
+	Image      *firefly.Image // Pointer to an Image
+	IsRevealed bool           // Has the tile has, at one time, been revealed to us by FoV?
 	TileType   TileType
 }
 
@@ -53,7 +34,6 @@ type Level struct {
 // NewLevel creates a new game level in a dungeon.
 func NewLevel() Level {
 	l := Level{}
-	loadTileImages()
 	rooms := make([]Rect, 0)
 	l.Rooms = rooms
 	l.GenerateLevelTiles()
@@ -61,18 +41,18 @@ func NewLevel() Level {
 	return l
 }
 
-// Tiles will be stoted in one slice. We will use GetIndexFromXY to
+// Tiles will be stored in one slice. We will use GetIndexFromXY to
 // determine which tile to return.
 // GetIndexFromXY gets the index of the map array from a given X,Y TILE coordinate.
 // This coordinate is logical tiles, not pixels.
 func (level *Level) GetIndexFromXY(x int, y int) int {
-	gd := CurrentGameData()
+	gd := CurrentGame().Data
 	return (y * gd.Cols) + x
 }
 
 // createTiles creates a map of all walls as a baseline for carving out a level.
 func (level *Level) createTiles() []*MapTile {
-	gd := CurrentGameData()
+	gd := CurrentGame().Data
 	tiles := make([]*MapTile, gd.Rows*gd.Cols)
 	index := 0
 	for x := 0; x < gd.Cols; x++ {
@@ -82,7 +62,7 @@ func (level *Level) createTiles() []*MapTile {
 				PixelX:     x * gd.TileWidth,
 				PixelY:     y * gd.TileHeight,
 				Blocked:    true,
-				Image:      wall,
+				Image:      CurrentGame().Images["wall"],
 				IsRevealed: false,
 				TileType:   WALL,
 			}
@@ -98,7 +78,7 @@ func (level *Level) createRoom(room Rect) {
 			index := level.GetIndexFromXY(x, y)
 			level.Tiles[index].Blocked = false
 			level.Tiles[index].TileType = FLOOR
-			level.Tiles[index].Image = floor
+			level.Tiles[index].Image = CurrentGame().Images["floor"]
 		}
 	}
 }
@@ -109,7 +89,7 @@ func (level *Level) GenerateLevelTiles() {
 	MAX_SIZE := 10
 	MAX_ROOMS := 30
 
-	gd := CurrentGameData()
+	gd := CurrentGame().Data
 	tiles := level.createTiles()
 	level.Tiles = tiles
 	contains_rooms := false
@@ -151,39 +131,31 @@ func (level *Level) GenerateLevelTiles() {
 }
 
 func (level *Level) createHorizontalTunnel(x1 int, x2 int, y int) {
-	gd := CurrentGameData()
+	gd := CurrentGame().Data
 	for x := math.Min(float64(x1), float64(x2)); x < math.Max(float64(x1), float64(x2))+1; x++ {
 		index := level.GetIndexFromXY(int(x), y)
 		if index > 0 && index < gd.Rows*gd.Cols {
 			level.Tiles[index].Blocked = false
 			level.Tiles[index].TileType = FLOOR
-			// floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
-			// if err != nil {
-			// 	log.Fatal(err)
-			// }
-			// level.Tiles[index].Image = floor
+			level.Tiles[index].Image = CurrentGame().Images["floor"]
 		}
 	}
 }
 
 func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
-	gd := CurrentGameData()
+	gd := CurrentGame().Data
 	for y := math.Min(float64(y1), float64(y2)); y < math.Max(float64(y1), float64(y2))+1; y++ {
 		index := level.GetIndexFromXY(x, int(y))
 		if index > 0 && index < gd.Rows*gd.Cols {
 			level.Tiles[index].TileType = FLOOR
 			level.Tiles[index].Blocked = false
-			// floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
-			// if err != nil {
-			// 	log.Fatal(err)
-			// }
-			// level.Tiles[index].Image = floor
+			level.Tiles[index].Image = CurrentGame().Images["floor"]
 		}
 	}
 }
 
 func (level Level) InBounds(x, y int) bool {
-	gd := CurrentGameData()
+	gd := CurrentGame().Data
 	if x < 0 || x > gd.Cols || y < 0 || y > gd.Rows {
 		return false
 	}
@@ -195,24 +167,19 @@ func (level Level) IsOpaque(x, y int) bool {
 	return level.Tiles[idx].TileType == WALL
 }
 
-func (level *Level) DrawLevel(screen *Image) {
-	// gd := NewGameData()
-	// for x := 0; x < gd.Cols; x++ {
-	// 	for y := 0; y < gd.Rows; y++ {
-	// 		idx := level.GetIndexFromXY(x, y)
-	// 		tile := level.Tiles[idx]
-	// 		isVisible := level.PlayerFoV.IsVisible(x, y)
-	// 		if isVisible {
-	// 			//op := &ebiten.DrawImageOptions{}
-	// 			//op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))
-	// 			screen.DrawImage(tile.Image, op)
-	// 			level.Tiles[idx].IsRevealed = true
-	// 		} else if tile.IsRevealed {
-	// 			//op := &ebiten.DrawImageOptions{}
-	// 			//op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))
-	// 			//op.ColorM.Scale(1.0, 1.0, 1.0, 0.25)
-	// 			screen.DrawImage(tile.Image, op)
-	// 		}
-	// 	}
-	// }
+func (level *Level) DrawLevel() {
+	gd := CurrentGame().Data
+	for x := 0; x < gd.Cols; x++ {
+		for y := 0; y < gd.Rows; y++ {
+			idx := level.GetIndexFromXY(x, y)
+			tile := level.Tiles[idx]
+			isVisible := level.PlayerFoV.IsVisible(x, y)
+			if isVisible {
+				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
+				level.Tiles[idx].IsRevealed = true
+			} else if tile.IsRevealed {
+				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
+			}
+		}
+	}
 }

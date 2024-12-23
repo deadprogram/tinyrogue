@@ -8,8 +8,6 @@ type GameData struct {
 	TileHeight int
 }
 
-var currentGameData GameData
-
 // NewGameData creates a fully populated GameData Struct.
 func NewGameData(cols, rows int) GameData {
 	g := GameData{
@@ -29,6 +27,6 @@ func (gd *GameData) GameHeight() int {
 	return gd.TileHeight * gd.Rows
 }
 
-func CurrentGameData() GameData {
-	return currentGameData
-}
+// func CurrentGameData() GameData {
+// 	return CurrentGame().Data
+// }

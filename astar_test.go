@@ -2,11 +2,19 @@ package tinyrogue
 
 import (
 	"testing"
+
+	"github.com/firefly-zero/firefly-go/firefly"
 )
 
 func TestAStar(t *testing.T) {
-	currentGameData = NewGameData(15, 15)
-	level := NewLevel()
+	game := NewGame()
+	game.Images["floor"] = &firefly.Image{}
+	game.Images["wall"] = &firefly.Image{}
+
+	game.SetData(NewGameData(15, 15))
+	game.SetMap(NewGameMap())
+
+	level := game.Map.CurrentLevel
 
 	room1 := level.Rooms[0]
 	room2 := level.Rooms[len(level.Rooms)-1]
