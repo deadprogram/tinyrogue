@@ -1,14 +1,12 @@
 package tinyrogue
 
 import (
-	"crypto/rand"
-	"math/big"
+	"github.com/firefly-zero/firefly-go/firefly"
 )
 
 // GetRandomInt returns an integer from 0 to the number - 1
 func GetRandomInt(num int) int {
-	x, _ := rand.Int(rand.Reader, big.NewInt(int64(num)))
-	return int(x.Int64())
+	return int(firefly.GetRandom()) % (num - 1)
 }
 
 // GetDiceRoll returns an integer from 1 to the number
@@ -16,8 +14,8 @@ func GetDiceRoll(num int) int {
 	if num < 1 {
 		num = 1
 	}
-	x, _ := rand.Int(rand.Reader, big.NewInt(int64(num)))
-	return int(x.Int64()) + 1
+	x := int(firefly.GetRandom()) % num
+	return x + 1
 }
 
 // Return a number between two numbers inclusive.

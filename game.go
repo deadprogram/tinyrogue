@@ -4,11 +4,9 @@ import "github.com/firefly-zero/firefly-go/firefly"
 
 // Game holds all data the entire game will need.
 type Game struct {
-	Debug bool
-	Map   *GameMap
-	Data  GameData
-	// World       *ecs.Manager
-	// WorldTags   map[string]ecs.Tag
+	Debug       bool
+	Map         GameMap
+	Data        GameData
 	Turn        TurnState
 	TurnCounter int
 	Images      map[string]*firefly.Image
@@ -22,9 +20,6 @@ func NewGame() *Game {
 	g.Debug = true
 
 	g.Images = make(map[string]*firefly.Image)
-	// world, tags := InitializeWorld(g.Map.CurrentLevel)
-	// g.World = world
-	// g.WorldTags = tags
 	g.Turn = PlayerTurn
 	g.TurnCounter = 0
 
@@ -33,7 +28,7 @@ func NewGame() *Game {
 	return g
 }
 
-func (g *Game) SetMap(m *GameMap) {
+func (g *Game) SetMap(m GameMap) {
 	g.Map = m
 }
 

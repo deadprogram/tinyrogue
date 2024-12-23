@@ -2,6 +2,7 @@ package tinyrogue
 
 import (
 	"math"
+	"strconv"
 
 	"github.com/firefly-zero/firefly-go/firefly"
 	"github.com/norendren/go-fov/fov"
@@ -53,6 +54,11 @@ func (level *Level) GetIndexFromXY(x int, y int) int {
 // createTiles creates a map of all walls as a baseline for carving out a level.
 func (level *Level) createTiles() []*MapTile {
 	gd := CurrentGame().Data
+	wallImg, ok := CurrentGame().Images["wall"]
+	if !ok {
+		firefly.LogError("Could not find wall image")
+	}
+
 	tiles := make([]*MapTile, gd.Rows*gd.Cols)
 	index := 0
 	for x := 0; x < gd.Cols; x++ {
@@ -62,23 +68,32 @@ func (level *Level) createTiles() []*MapTile {
 				PixelX:     x * gd.TileWidth,
 				PixelY:     y * gd.TileHeight,
 				Blocked:    true,
-				Image:      CurrentGame().Images["wall"],
+				Image:      wallImg,
 				IsRevealed: false,
 				TileType:   WALL,
 			}
 			tiles[index] = &tile
 		}
 	}
+
+	firefly.LogDebug("Total tiles created: " + strconv.Itoa(len(tiles)))
 	return tiles
 }
 
 func (level *Level) createRoom(room Rect) {
+	floorImg, ok := CurrentGame().Images["floor"]
+	if !ok {
+		firefly.LogError("Could not find floor image")
+	}
+
 	for y := room.Y1 + 1; y < room.Y2; y++ {
 		for x := room.X1 + 1; x < room.X2; x++ {
 			index := level.GetIndexFromXY(x, y)
-			level.Tiles[index].Blocked = false
-			level.Tiles[index].TileType = FLOOR
-			level.Tiles[index].Image = CurrentGame().Images["floor"]
+			if index > 0 && index < len(level.Tiles) {
+				level.Tiles[index].Blocked = false
+				level.Tiles[index].TileType = FLOOR
+				level.Tiles[index].Image = floorImg
+			}
 		}
 	}
 }
@@ -111,6 +126,7 @@ func (level *Level) GenerateLevelTiles() {
 		if okToAdd {
 			level.createRoom(new_room)
 			if contains_rooms {
+				firefly.LogDebug("Creating tunnel")
 				newX, newY := new_room.Center()
 				prevX, prevY := level.Rooms[len(level.Rooms)-1].Center()
 
@@ -154,7 +170,7 @@ func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
 	}
 }
 
-func (level Level) InBounds(x, y int) bool {
+func (level *Level) InBounds(x, y int) bool {
 	gd := CurrentGame().Data
 	if x < 0 || x > gd.Cols || y < 0 || y > gd.Rows {
 		return false
@@ -162,7 +178,7 @@ func (level Level) InBounds(x, y int) bool {
 	return true
 }
 
-func (level Level) IsOpaque(x, y int) bool {
+func (level *Level) IsOpaque(x, y int) bool {
 	idx := level.GetIndexFromXY(x, y)
 	return level.Tiles[idx].TileType == WALL
 }
@@ -173,13 +189,13 @@ func (level *Level) DrawLevel() {
 		for y := 0; y < gd.Rows; y++ {
 			idx := level.GetIndexFromXY(x, y)
 			tile := level.Tiles[idx]
-			isVisible := level.PlayerFoV.IsVisible(x, y)
-			if isVisible {
-				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
-				level.Tiles[idx].IsRevealed = true
-			} else if tile.IsRevealed {
-				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
-			}
+			//isVisible := level.PlayerFoV.IsVisible(x, y)
+			//if isVisible {
+			firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
+			level.Tiles[idx].IsRevealed = true
+			//} else if tile.IsRevealed {
+			//	firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
+			//}
 		}
 	}
 }
