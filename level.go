@@ -100,9 +100,9 @@ func (level *Level) createRoom(room Rect) {
 
 // GenerateLevelTiles creates a new Dungeon Level Map.
 func (level *Level) GenerateLevelTiles() {
-	MIN_SIZE := 6
-	MAX_SIZE := 10
-	MAX_ROOMS := 30
+	MIN_SIZE := 4
+	MAX_SIZE := 8
+	MAX_ROOMS := 10
 
 	gd := CurrentGame().Data
 	tiles := level.createTiles()
@@ -144,6 +144,7 @@ func (level *Level) GenerateLevelTiles() {
 			contains_rooms = true
 		}
 	}
+	firefly.LogDebug("Total rooms created: " + strconv.Itoa(len(level.Rooms)))
 }
 
 func (level *Level) createHorizontalTunnel(x1 int, x2 int, y int) {
@@ -189,13 +190,15 @@ func (level *Level) DrawLevel() {
 		for y := 0; y < gd.Rows; y++ {
 			idx := level.GetIndexFromXY(x, y)
 			tile := level.Tiles[idx]
+			// TODO: add player
 			//isVisible := level.PlayerFoV.IsVisible(x, y)
-			//if isVisible {
-			firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
-			level.Tiles[idx].IsRevealed = true
-			//} else if tile.IsRevealed {
-			//	firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
-			//}
+			isVisible := true
+			if isVisible {
+				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
+				level.Tiles[idx].IsRevealed = true
+			} else if tile.IsRevealed {
+				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
+			}
 		}
 	}
 }
