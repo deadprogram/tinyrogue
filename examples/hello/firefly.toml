@@ -6,3 +6,4 @@ app_name = "Hello Demo"
 [files]
 floor = { path = "floor.png" }
 wall = { path = "wall.png" }
+player = { path = "player.png" }
