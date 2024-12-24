@@ -11,14 +11,17 @@ func GetRandomInt(num int) int {
 
 // GetDiceRoll returns an integer from 1 to the number
 func GetDiceRoll(num int) int {
-	if num < 1 {
+	switch num {
+	case 0:
 		num = 1
+	default:
+		num -= 1
 	}
 	x := int(firefly.GetRandom()) % num
-	return x + 1
+	return 1 + x
 }
 
 // Return a number between two numbers inclusive.
 func GetRandomBetween(low int, high int) int {
-	return GetDiceRoll(high-low) + high
+	return low + int(firefly.GetRandom())%(high-low)
 }
