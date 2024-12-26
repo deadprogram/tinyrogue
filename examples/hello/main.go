@@ -25,7 +25,7 @@ func boot() {
 	playerImage := firefly.LoadFile("player").Image()
 	game.Images["player"] = &playerImage
 
-	game.SetData(tinyrogue.NewGameData(15, 10))
+	game.SetData(tinyrogue.NewGameData(16, 10))
 	game.SetMap(tinyrogue.NewGameMap())
 	game.SetPlayer(tinyrogue.NewPlayer())
 }
