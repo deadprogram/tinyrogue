@@ -24,10 +24,15 @@ func boot() {
 
 	playerImage := firefly.LoadFile("player").Image()
 	game.Images["player"] = &playerImage
+	player := tinyrogue.NewPlayer()
+	player.SetImage(game.Images["player"])
 
 	game.SetData(tinyrogue.NewGameData(16, 10))
 	game.SetMap(tinyrogue.NewGameMap())
-	game.SetPlayer(tinyrogue.NewPlayer())
+	game.SetPlayer(player)
+
+	// set player initial position
+	player.MoveTo(&tinyrogue.Position{X: 1, Y: 1})
 }
 
 func update() {
