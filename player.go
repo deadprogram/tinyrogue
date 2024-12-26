@@ -10,7 +10,7 @@ type Player struct {
 func NewPlayer() *Player {
 	return &Player{
 		Image: CurrentGame().Images["player"],
-		pos:   Position{X: 3, Y: 0},
+		pos:   Position{X: 1, Y: 1},
 	}
 }
 
@@ -33,5 +33,5 @@ func (p *Player) MoveTo(pos *Position) {
 
 func (p *Player) Draw() {
 	gd := CurrentGame().Data
-	firefly.DrawImage(*p.Image, firefly.Point{X: p.pos.X * gd.Cols, Y: p.pos.Y * gd.Rows})
+	firefly.DrawImage(*p.Image, firefly.Point{X: p.pos.X * gd.TileWidth, Y: p.pos.Y * gd.TileHeight})
 }

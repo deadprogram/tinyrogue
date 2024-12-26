@@ -56,7 +56,7 @@ func (level *Level) createTiles() []*MapTile {
 	gd := CurrentGame().Data
 	wallImg, ok := CurrentGame().Images["wall"]
 	if !ok {
-		firefly.LogError("Could not find wall image")
+		logError("Could not find wall image")
 	}
 
 	tiles := make([]*MapTile, gd.Rows*gd.Cols)
@@ -76,14 +76,14 @@ func (level *Level) createTiles() []*MapTile {
 		}
 	}
 
-	firefly.LogDebug("Total tiles created: " + strconv.Itoa(len(tiles)))
+	logDebug("Total tiles created: " + strconv.Itoa(len(tiles)))
 	return tiles
 }
 
 func (level *Level) createRoom(room Rect) {
 	floorImg, ok := CurrentGame().Images["floor"]
 	if !ok {
-		firefly.LogError("Could not find floor image")
+		logError("Could not find floor image")
 	}
 
 	for y := room.Y1 + 1; y < room.Y2; y++ {
@@ -102,7 +102,7 @@ func (level *Level) createRoom(room Rect) {
 func (level *Level) GenerateLevelTiles() {
 	MIN_SIZE := 4
 	MAX_SIZE := 8
-	MAX_ROOMS := 10
+	MAX_ROOMS := 20
 
 	gd := CurrentGame().Data
 	tiles := level.createTiles()
@@ -126,7 +126,6 @@ func (level *Level) GenerateLevelTiles() {
 		if okToAdd {
 			level.createRoom(new_room)
 			if contains_rooms {
-				firefly.LogDebug("Creating tunnel")
 				newX, newY := new_room.Center()
 				prevX, prevY := level.Rooms[len(level.Rooms)-1].Center()
 
@@ -144,7 +143,7 @@ func (level *Level) GenerateLevelTiles() {
 			contains_rooms = true
 		}
 	}
-	firefly.LogDebug("Total rooms created: " + strconv.Itoa(len(level.Rooms)))
+	logDebug("Total rooms created: " + strconv.Itoa(len(level.Rooms)))
 }
 
 func (level *Level) createHorizontalTunnel(x1 int, x2 int, y int) {
