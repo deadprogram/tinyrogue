@@ -5,7 +5,7 @@ import (
 )
 
 func TestGameData(t *testing.T) {
-	gameData := NewGameData(42, 24)
+	gameData := NewGameData(42, 24, 16, 16)
 	if gameData.GameHeight() != 24*16 {
 		t.Error("Failed to create game data")
 	}

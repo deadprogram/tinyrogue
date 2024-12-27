@@ -30,7 +30,7 @@ func boot() {
 	monster := tinyrogue.NewCreature("Monster", &monsterImage, 60)
 	monster.SetBehavior(tinyrogue.CreatureApproach)
 
-	game.SetData(tinyrogue.NewGameData(16, 10))
+	game.SetData(tinyrogue.NewGameData(16, 10, 16, 16))
 	game.SetMap(tinyrogue.NewGameMap())
 
 	game.SetPlayer(player)

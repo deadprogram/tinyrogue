@@ -9,24 +9,22 @@ type GameData struct {
 }
 
 // NewGameData creates a fully populated GameData Struct.
-func NewGameData(cols, rows int) GameData {
+func NewGameData(cols, rows, tilewidth, tileheight int) GameData {
 	g := GameData{
 		Cols:       cols,
 		Rows:       rows,
-		TileWidth:  16,
-		TileHeight: 16,
+		TileWidth:  tilewidth,
+		TileHeight: tileheight,
 	}
 	return g
 }
 
+// GameWidth returns the width of the game in pixels.
 func (gd *GameData) GameWidth() int {
 	return gd.TileWidth * gd.Cols
 }
 
+// GameHeight returns the height of the game in pixels.
 func (gd *GameData) GameHeight() int {
 	return gd.TileHeight * gd.Rows
 }
-
-// func CurrentGameData() GameData {
-// 	return CurrentGame().Data
-// }

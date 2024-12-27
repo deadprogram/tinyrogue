@@ -6,7 +6,7 @@ import (
 
 func TestLevel(t *testing.T) {
 	game := NewGame()
-	game.SetData(NewGameData(16, 10))
+	game.SetData(NewGameData(16, 10, 16, 16))
 	game.SetMap(NewGameMap())
 
 	level := game.Map.CurrentLevel

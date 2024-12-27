@@ -1,5 +1,6 @@
 package tinyrogue
 
+// Actionable is an interface for actions that can be taken by characters.
 type Actionable interface {
 	Action(sender Character, receiver Character)
 }

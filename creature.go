@@ -12,11 +12,13 @@ const (
 	CreatureAvoid
 )
 
+// Creature is the type for all creatures in the game.
 type Creature struct {
 	*character
 	CurrentBehavior CreatureBehavior
 }
 
+// NewCreature creates a new Creature and initializes the data
 func NewCreature(name string, img *firefly.Image, speed int) *Creature {
 	return &Creature{
 		character: &character{
@@ -27,17 +29,22 @@ func NewCreature(name string, img *firefly.Image, speed int) *Creature {
 	}
 }
 
+// SetBehavior sets the behavior of the creature.
 func (c *Creature) SetBehavior(b CreatureBehavior) {
 	c.CurrentBehavior = b
 }
 
+// Update updates the creature.
 func (c *Creature) Update() {
 	switch c.CurrentBehavior {
 	case CreatureApproach:
 		c.Approach()
+	case CreatureAvoid:
+		c.Avoid()
 	}
 }
 
+// Approach moves the creature towards the player.
 func (c *Creature) Approach() {
 	l := CurrentGame().Map.CurrentLevel
 	playerPosition := CurrentGame().Player.GetPosition()
@@ -66,4 +73,8 @@ func (c *Creature) Approach() {
 			}
 		}
 	}
+}
+
+func (c *Creature) Avoid() {
+	logDebug("Avoid is not implemented yet")
 }

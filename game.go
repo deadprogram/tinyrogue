@@ -23,6 +23,7 @@ type Game struct {
 	// UseFOV is a flag to determine if the game should use Field of View.
 	UseFOV bool
 
+	// ActionSystem is the interface for the game to handle actions between characters.
 	ActionSystem Actionable
 }
 
@@ -108,10 +109,12 @@ func (g *Game) Layout(w, h int) (int, int) {
 	return gd.GameWidth(), gd.GameHeight()
 }
 
+// CurrentGame returns the current game.
 func CurrentGame() *Game {
 	return currentGame
 }
 
+// GetCreatureForTile returns the creature for the given tile index.
 func (g *Game) GetCreatureForTile(index int) *Creature {
 	for _, c := range g.Creatures {
 		pos := c.GetPosition()
@@ -122,6 +125,7 @@ func (g *Game) GetCreatureForTile(index int) *Creature {
 	return nil
 }
 
+// GetIndexFromXY returns the index for the given x and y coordinates.
 func (g *Game) GetIndexFromXY(x int, y int) int {
 	return (y * g.Data.Cols) + x
 }
