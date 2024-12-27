@@ -32,6 +32,7 @@ func boot() {
 
 	game.SetData(tinyrogue.NewGameData(16, 10, 16, 16))
 	game.SetMap(tinyrogue.NewGameMap())
+	game.UseFOV = true
 
 	game.SetPlayer(player)
 	game.AddCreature(monster)

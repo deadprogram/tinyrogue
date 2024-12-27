@@ -98,7 +98,9 @@ func (g *Game) Render() {
 
 	// Draw the creatures
 	for _, c := range g.Creatures {
-		c.Draw()
+		if c.Visible || !g.UseFOV {
+			c.Draw()
+		}
 	}
 }
 

@@ -16,19 +16,20 @@ const (
 
 // Each of the map tiles will be represented  by one of these structures
 type MapTile struct {
-	PixelX     int // Upper left corner of the tile
-	PixelY     int
-	Blocked    bool           // The tile should block the player or monster ?
-	Image      *firefly.Image // Pointer to an Image
-	IsRevealed bool           // Has the tile has, at one time, been revealed to us by FoV?
-	TileType   TileType
+	PixelX   int // Upper left corner of the tile
+	PixelY   int
+	Blocked  bool           // The tile should block the player or monster ?
+	Image    *firefly.Image // Pointer to an Image
+	Visible  bool
+	Explored bool
+	TileType TileType
 }
 
 // Level holds the tile information for a complete dungeon level.
 type Level struct {
-	Tiles []*MapTile
-	Rooms []Rect
-	//PlayerFoV *fov.View
+	Tiles     []*MapTile
+	Rooms     []Rect
+	playerFoV *FieldOfVision
 }
 
 // NewLevel creates a new game level in a dungeon.
@@ -37,7 +38,10 @@ func NewLevel() Level {
 	rooms := make([]Rect, 0)
 	l.Rooms = rooms
 	l.GenerateLevelTiles()
-	//l.PlayerFoV = fov.New()
+	l.playerFoV = &FieldOfVision{}
+	l.playerFoV.InitializeFOV()
+	l.playerFoV.SetTorchRadius(4)
+
 	return l
 }
 
@@ -63,12 +67,11 @@ func (level *Level) createTiles() []*MapTile {
 		for y := 0; y < gd.Rows; y++ {
 			index = level.GetIndexFromXY(x, y)
 			tile := MapTile{
-				PixelX:     x * gd.TileWidth,
-				PixelY:     y * gd.TileHeight,
-				Blocked:    true,
-				Image:      wallImg,
-				IsRevealed: false,
-				TileType:   WALL,
+				PixelX:   x * gd.TileWidth,
+				PixelY:   y * gd.TileHeight,
+				Blocked:  true,
+				Image:    wallImg,
+				TileType: WALL,
 			}
 			tiles[index] = &tile
 		}
@@ -187,17 +190,15 @@ func (level *Level) DrawLevel() {
 		for y := 0; y < gd.Rows; y++ {
 			idx := level.GetIndexFromXY(x, y)
 			tile := level.Tiles[idx]
-			// TODO: add player
-			//isVisible := level.PlayerFoV.IsVisible(x, y)
-			//isVisible := true
-			if tile.IsRevealed || !CurrentGame().UseFOV {
+			if tile.Visible || tile.Explored || !CurrentGame().UseFOV {
 				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
-				//level.Tiles[idx].IsRevealed = true
-				// } else if tile.IsRevealed {
-				// 	firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
 			}
 		}
 	}
+}
+
+func (level *Level) RayCast(playerX, playerY int) {
+	level.playerFoV.RayCast(playerX, playerY, level)
 }
 
 func (level *Level) Dump() {

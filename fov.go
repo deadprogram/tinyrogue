@@ -1,55 +1,100 @@
 package tinyrogue
 
 import (
-	"math"
+	"github.com/orsinium-labs/tinymath"
 )
 
-func clearVisibility(tiles []*MapTile) {
-	for _, tile := range tiles {
-		tile.IsRevealed = false
+// Based on Gogue https://github.com/gogue-framework/gogue
+
+// FieldOfVision represents an area that an entity can see, defined by the torch radius. The cos and sin tables are
+// generated once on instantiation, so we don't have to build them each time we want to calculate visible distances.
+type FieldOfVision struct {
+	cosTable    map[int]float32
+	sinTable    map[int]float32
+	torchRadius int
+}
+
+// InitializeFOV generates the cos and sin tables, for 360 degrees, for use when raycasting to determine line of sight
+func (f *FieldOfVision) InitializeFOV() {
+	f.cosTable = make(map[int]float32)
+	f.sinTable = make(map[int]float32)
+
+	for i := 0; i < 360; i++ {
+		ax := tinymath.Sin(float32(i) / (float32(180) / tinymath.Pi))
+		ay := tinymath.Cos(float32(i) / (float32(180) / tinymath.Pi))
+
+		f.sinTable[i] = ax
+		f.cosTable[i] = ay
 	}
 }
 
-func getIndexFromXY(x int, y int) int {
-	gd := CurrentGame().Data
-	return (y * gd.Cols) + x
-}
-
-// adapted from https://www.albertford.com/shadowcasting/
-
-func computeFoV(origin Position, tiles []*MapTile) {
-	tiles[getIndexFromXY(origin.X, origin.Y)].IsRevealed = true
-	for i := 0; i < 4; i++ {
-		quadrant := Quadrant{cardinal: i, origin: origin}
-		first_row := Row{depth: 1.0, start_slope: -1.0, end_slope: 1.0}
-		scan(first_row, tiles, &quadrant)
+// SetTorchRadius sets the radius of the FOVs torch, or how far the entity can see
+func (f *FieldOfVision) SetTorchRadius(radius int) {
+	if radius > 1 {
+		f.torchRadius = radius
 	}
 }
 
-func reveal(pos Position, tiles []*MapTile, quadrant *Quadrant) {
-	q := transform(quadrant, pos)
-	if inBounds(q.X, q.Y) {
-		tiles[getIndexFromXY(pos.X, pos.Y)].IsRevealed = true
+// Equal to the code that used to live in main's game:clearFOV()
+// SetAllInvisible makes all tiles on the gamemap invisible to the player.
+func (f *FieldOfVision) SetAllInvisible(m *Level) {
+	for _, tile := range m.Tiles {
+		tile.Visible = false
 	}
 }
 
-func isWall(pos Position, tiles []*MapTile, quadrant *Quadrant) bool {
-	if pos.X < 0 || pos.Y < 0 {
-		return false
-	}
+// RayCast casts out rays each degree in a 360 circle from the player. If a ray passes over a floor (does not block sight)
+// tile, keep going, up to the maximum torch radius (view radius) of the player. If the ray intersects a wall
+// (blocks sight), stop, as the player will not be able to see past that. Every visible tile will get the Visible
+// and Explored properties set to true.
+func (f *FieldOfVision) RayCast(playerX, playerY int, m *Level) {
+	for i := 0; i < 360; i++ {
 
-	var w bool
-	q := transform(quadrant, pos)
-	if inBounds(q.X, q.Y) {
-		w = tiles[getIndexFromXY(pos.X, pos.X)].Blocked
-	} else {
-		w = true
-	}
+		ax := f.sinTable[i]
+		ay := f.cosTable[i]
 
-	return w
+		x := float32(playerX)
+		y := float32(playerY)
+
+		// Mark the players current position as explored
+		tile := m.Tiles[m.GetIndexFromXY(playerX, playerY)]
+		tile.Explored = true
+		tile.Visible = true
+
+		for j := 0; j < f.torchRadius; j++ {
+			x -= ax
+			y -= ay
+
+			roundedX := int(round(x))
+			roundedY := int(round(y))
+
+			if !inBounds(roundedX, roundedY) {
+				break
+			}
+
+			tile := m.Tiles[m.GetIndexFromXY(roundedX, roundedY)]
+			tile.Explored = true
+			tile.Visible = true
+
+			// any creature on this tile should be visible
+			creature := CurrentGame().GetCreatureForTile(m.GetIndexFromXY(roundedX, roundedY))
+			if creature != nil {
+				creature.Visible = true
+			}
+
+			if tile.TileType == WALL {
+				// The ray hit a wall, go no further
+				break
+			}
+		}
+	}
 }
 
-func inBounds(x int, y int) bool {
+func round(f float32) float32 {
+	return tinymath.Floor(f + .5)
+}
+
+func inBounds(x, y int) bool {
 	gd := CurrentGame().Data
 
 	if x < gd.Cols && y < gd.Rows && x >= 0 && y >= 0 {
@@ -57,115 +102,4 @@ func inBounds(x int, y int) bool {
 	} else {
 		return false
 	}
-}
-
-func isFloor(tile Position, tiles []*MapTile, quadrant *Quadrant) bool {
-	if tile.X < 0 || tile.Y < 0 {
-		return false
-	}
-
-	var f bool
-	q := transform(quadrant, tile)
-	if inBounds(q.X, q.Y) {
-		f = !tiles[getIndexFromXY(tile.X, tile.Y)].Blocked
-	}
-
-	return f
-}
-
-func scan(row Row, m []*MapTile, quadrant *Quadrant) {
-	rows := []Row{row}
-	for len(rows) > 0 {
-		row = rows[len(rows)-1]
-		rows = rows[:len(rows)-1]
-		prev_tile := Position{X: -1, Y: -1}
-		for _, tile := range tiles(row) {
-			if isWall(tile, m, quadrant) || isSymmetric(row, tile) {
-				reveal(tile, m, quadrant)
-			}
-			if isWall(prev_tile, m, quadrant) && isFloor(tile, m, quadrant) {
-				row.start_slope = slope(tile)
-			}
-			if isFloor(prev_tile, m, quadrant) && isWall(tile, m, quadrant) {
-				next_row := next(&row)
-				next_row.end_slope = slope(tile)
-				rows = append(rows, next_row)
-			}
-			prev_tile = tile
-		}
-		if isFloor(prev_tile, m, quadrant) {
-			rows = append(rows, next(&row))
-		}
-	}
-}
-
-const (
-	north = iota
-	south
-	east
-	west
-)
-
-type Quadrant struct {
-	cardinal int
-	origin   Position
-}
-
-func transform(self *Quadrant, tile Position) Position {
-	row, col := tile.X, tile.Y
-	var v Position
-	switch self.cardinal {
-	case north:
-		v = Position{X: self.origin.X + col, Y: self.origin.Y - row}
-	case south:
-		v = Position{X: self.origin.X + col, Y: self.origin.Y + row}
-	case east:
-		v = Position{X: self.origin.X + row, Y: self.origin.Y + col}
-	case west:
-		v = Position{X: self.origin.X - row, Y: self.origin.Y + col}
-	}
-	return v
-}
-
-type Row struct {
-	depth       float64
-	start_slope float64
-	end_slope   float64
-}
-
-func tiles(self Row) []Position {
-	min_col := roundTiesUp(self.depth * self.start_slope)
-	max_col := roundTiesDown(self.depth * self.end_slope)
-
-	var tiles []Position
-	for col := min_col; col < max_col+1; col++ {
-		tiles = append(tiles, Position{X: int(self.depth), Y: col})
-	}
-	return tiles
-}
-
-func next(self *Row) Row {
-	return Row{depth: self.depth + 1.0, start_slope: self.start_slope, end_slope: self.end_slope}
-}
-
-func slope(tile Position) float64 {
-	row_depth, col := tile.X, tile.Y
-	return float64(2*col-1) / float64(2*row_depth)
-}
-
-func isSymmetric(row Row, tile Position) bool {
-	if tile.X < 0 || tile.Y < 0 {
-		return false
-	}
-
-	col := tile.Y
-	return float64(col) >= row.depth*row.start_slope && float64(col) <= row.depth*row.end_slope
-}
-
-func roundTiesUp(n float64) int {
-	return int(math.Floor(n + 0.5))
-}
-
-func roundTiesDown(n float64) int {
-	return int(math.Ceil(n - 0.5))
 }

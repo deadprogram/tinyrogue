@@ -4,7 +4,11 @@
 
 Experimental package for creating roguelike games using TinyGo.
 
-Based on code originally from https://github.com/cscazorla/roguelike but heavily modified.
+Based on code originally from the following sources:
+
+https://github.com/cscazorla/roguelike
+https://github.com/gogue-framework/gogue
+
 
 ## Useful tools
 

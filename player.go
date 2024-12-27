@@ -38,7 +38,7 @@ func (p *Player) Update() {
 	tile := level.Tiles[index]
 
 	if g.UseFOV {
-		computeFoV(*pos, level.Tiles)
+		level.RayCast(pos.X, pos.Y)
 	}
 
 	if !tile.Blocked {

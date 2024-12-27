@@ -16,6 +16,7 @@ const (
 type Creature struct {
 	*character
 	CurrentBehavior CreatureBehavior
+	Visible         bool
 }
 
 // NewCreature creates a new Creature and initializes the data
