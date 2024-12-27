@@ -24,10 +24,10 @@ func boot() {
 	game.Images["wall"] = &wallImage
 
 	playerImage := firefly.LoadFile("player", nil).Image()
-	player := tinyrogue.NewPlayer(&playerImage, 5)
+	player := tinyrogue.NewPlayer("Player", &playerImage, 5)
 
 	monsterImage := firefly.LoadFile("monster", nil).Image()
-	monster := tinyrogue.NewCreature(&monsterImage, 60)
+	monster := tinyrogue.NewCreature("Monster", &monsterImage, 60)
 	monster.SetBehavior(tinyrogue.CreatureApproach)
 
 	game.SetData(tinyrogue.NewGameData(16, 10))
@@ -59,5 +59,5 @@ type CombatSystem struct {
 }
 
 func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.Character) {
-	firefly.LogDebug("Fight!")
+	firefly.LogDebug(attacker.Name() + " is attacking " + defender.Name())
 }
