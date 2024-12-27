@@ -17,9 +17,10 @@ type Creature struct {
 	CurrentBehavior CreatureBehavior
 }
 
-func NewCreature(img *firefly.Image, speed int) *Creature {
+func NewCreature(name string, img *firefly.Image, speed int) *Creature {
 	return &Creature{
 		character: &character{
+			name:  name,
 			Image: img,
 			speed: speed,
 		},
@@ -50,7 +51,7 @@ func (c *Creature) Approach() {
 		if creaturePos.GetManhattanDistance(playerPosition) == 1 {
 			// The creature is right next to the player. Now what?
 			if CurrentGame().ActionSystem != nil {
-				CurrentGame().ActionSystem.Action(CurrentGame().Player, c)
+				CurrentGame().ActionSystem.Action(c, CurrentGame().Player)
 			}
 		} else {
 			path := AStar{}.GetPath(l, creaturePos, playerPosition)

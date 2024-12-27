@@ -6,9 +6,10 @@ type Player struct {
 	*character
 }
 
-func NewPlayer(img *firefly.Image, speed int) *Player {
+func NewPlayer(name string, img *firefly.Image, speed int) *Player {
 	return &Player{
 		character: &character{
+			name:  name,
 			Image: img,
 			speed: speed,
 		},

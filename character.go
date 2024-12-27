@@ -3,6 +3,7 @@ package tinyrogue
 import "github.com/firefly-zero/firefly-go/firefly"
 
 type Character interface {
+	Name() string
 	SetImage(img *firefly.Image)
 	GetSpeed() int
 	SetSpeed(speed int)
@@ -13,13 +14,14 @@ type Character interface {
 }
 
 type character struct {
+	name  string
 	Image *firefly.Image
 	pos   Position
 	speed int
 }
 
-func NewCharacterizer() *character {
-	return &character{}
+func (c *character) Name() string {
+	return c.name
 }
 
 func (c *character) SetImage(img *firefly.Image) {
