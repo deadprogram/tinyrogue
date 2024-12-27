@@ -24,24 +24,14 @@ func boot() {
 	game.Images["wall"] = &wallImage
 
 	playerImage := firefly.LoadFile("player", nil).Image()
-	game.Images["player"] = &playerImage
-	player := tinyrogue.NewPlayer()
-	player.SetImage(game.Images["player"])
-	player.SetSpeed(10)
+	player := tinyrogue.NewPlayer(&playerImage, 10)
 
 	monsterImage := firefly.LoadFile("monster", nil).Image()
-	game.Images["monster"] = &monsterImage
-	monster := tinyrogue.NewCreature()
-	monster.SetImage(game.Images["monster"])
-	monster.SetSpeed(60)
+	monster := tinyrogue.NewCreature(&monsterImage, 60)
 
-	firefly.LogDebug("set data")
 	game.SetData(tinyrogue.NewGameData(16, 10))
-
-	firefly.LogDebug("set map")
 	game.SetMap(tinyrogue.NewGameMap())
 
-	firefly.LogDebug("set player")
 	game.SetPlayer(player)
 	game.AddCreature(monster)
 

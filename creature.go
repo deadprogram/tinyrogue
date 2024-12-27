@@ -1,12 +1,17 @@
 package tinyrogue
 
+import "github.com/firefly-zero/firefly-go/firefly"
+
 type Creature struct {
 	*Character
 }
 
-func NewCreature() *Creature {
+func NewCreature(img *firefly.Image, speed int) *Creature {
 	return &Creature{
-		Character: &Character{},
+		Character: &Character{
+			Image: img,
+			speed: speed,
+		},
 	}
 }
 
