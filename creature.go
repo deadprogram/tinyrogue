@@ -1,6 +1,8 @@
 package tinyrogue
 
-import "github.com/firefly-zero/firefly-go/firefly"
+import (
+	"github.com/firefly-zero/firefly-go/firefly"
+)
 
 type Creature struct {
 	*Character

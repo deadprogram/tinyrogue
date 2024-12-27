@@ -11,10 +11,11 @@ func TestAStar(t *testing.T) {
 	game.Images["floor"] = &firefly.Image{}
 	game.Images["wall"] = &firefly.Image{}
 
-	game.SetData(NewGameData(15, 15))
+	game.SetData(NewGameData(16, 10))
 	game.SetMap(NewGameMap())
 
 	level := game.Map.CurrentLevel
+	level.Dump()
 
 	room1 := level.Rooms[0]
 	room2 := level.Rooms[len(level.Rooms)-1]
@@ -24,10 +25,43 @@ func TestAStar(t *testing.T) {
 	start := &Position{x1, y1}
 	x2, y2 := room2.Center()
 	end := &Position{x2, y2}
+
 	// Create the AStar object
 	as := AStar{}
 	// Get the path
 	path := as.GetPath(level, start, end)
+
+	// Check the path
+	if len(path) == 0 {
+		t.Errorf("Expected path length of > 0, got %d", len(path))
+	}
+}
+
+func TestAStar2(t *testing.T) {
+	game := NewGame()
+	game.Images["floor"] = &firefly.Image{}
+	game.Images["wall"] = &firefly.Image{}
+
+	game.SetData(NewGameData(32, 32))
+	game.SetMap(NewGameMap())
+
+	level := game.Map.CurrentLevel
+	level.Dump()
+
+	room1 := level.Rooms[0]
+	room2 := level.Rooms[len(level.Rooms)-1]
+
+	// Set the start and end points
+	x1, y1 := room1.Center()
+	start := &Position{x1, y1}
+	x2, y2 := room2.Center()
+	end := &Position{x2, y2}
+
+	// Create the AStar object
+	as := AStar{}
+	// Get the path
+	path := as.GetPath(level, start, end)
+
 	// Check the path
 	if len(path) == 0 {
 		t.Errorf("Expected path length of > 0, got %d", len(path))

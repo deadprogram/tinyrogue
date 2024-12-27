@@ -1,8 +1,7 @@
 package tinyrogue
 
 import (
-	"errors"
-	"reflect"
+	"slices"
 )
 
 // Node represents a given point on a map
@@ -27,20 +26,6 @@ func newNode(parent *node, position *Position) *node {
 	n.f = 0
 
 	return &n
-}
-
-func reverseSlice(data interface{}) {
-	value := reflect.ValueOf(data)
-	if value.Kind() != reflect.Slice {
-		panic(errors.New("data must be a slice type"))
-	}
-	valueLen := value.Len()
-	for i := 0; i <= int((valueLen-1)/2); i++ {
-		reverseIndex := valueLen - 1 - i
-		tmp := value.Index(reverseIndex).Interface()
-		value.Index(reverseIndex).Set(value.Index(i))
-		value.Index(i).Set(reflect.ValueOf(tmp))
-	}
 }
 
 func isInSlice(s []*node, target *node) bool {
@@ -108,7 +93,7 @@ func (as AStar) GetPath(level Level, start *Position, end *Position) []Position 
 				current = current.Parent
 			}
 			//Reverse the Path and Return it
-			reverseSlice(path)
+			slices.Reverse(path)
 			return path
 		}
 

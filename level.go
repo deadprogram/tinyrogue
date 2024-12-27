@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/firefly-zero/firefly-go/firefly"
-	"github.com/norendren/go-fov/fov"
 )
 
 type TileType int
@@ -27,9 +26,9 @@ type MapTile struct {
 
 // Level holds the tile information for a complete dungeon level.
 type Level struct {
-	Tiles     []*MapTile
-	Rooms     []Rect
-	PlayerFoV *fov.View
+	Tiles []*MapTile
+	Rooms []Rect
+	//PlayerFoV *fov.View
 }
 
 // NewLevel creates a new game level in a dungeon.
@@ -38,7 +37,7 @@ func NewLevel() Level {
 	rooms := make([]Rect, 0)
 	l.Rooms = rooms
 	l.GenerateLevelTiles()
-	l.PlayerFoV = fov.New()
+	//l.PlayerFoV = fov.New()
 	return l
 }
 
@@ -191,13 +190,36 @@ func (level *Level) DrawLevel() {
 			tile := level.Tiles[idx]
 			// TODO: add player
 			//isVisible := level.PlayerFoV.IsVisible(x, y)
-			isVisible := true
-			if isVisible {
+			//isVisible := true
+			if tile.IsRevealed || !CurrentGame().UseFOV {
 				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
-				level.Tiles[idx].IsRevealed = true
-			} else if tile.IsRevealed {
-				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
+				//level.Tiles[idx].IsRevealed = true
+				// } else if tile.IsRevealed {
+				// 	firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
 			}
 		}
+	}
+}
+
+func (level *Level) Dump() {
+	gd := CurrentGame().Data
+	hdr := "  "
+	for x := 0; x < gd.Cols; x++ {
+		hdr += strconv.Itoa(x % 10)
+	}
+	logDebug(hdr)
+
+	for y := 0; y < gd.Rows; y++ {
+		data := strconv.Itoa(y%10) + " "
+		for x := 0; x < gd.Cols; x++ {
+			idx := level.GetIndexFromXY(x, y)
+			tile := level.Tiles[idx]
+			if tile.TileType == WALL {
+				data += "#"
+			} else {
+				data += "."
+			}
+		}
+		logDebug(data)
 	}
 }

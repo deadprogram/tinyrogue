@@ -4,14 +4,24 @@ import "github.com/firefly-zero/firefly-go/firefly"
 
 // Game holds all data the entire game will need.
 type Game struct {
-	Debug       bool
-	Map         GameMap
-	Data        GameData
+	Debug bool
+	Map   GameMap
+	Data  GameData
+
+	// TurnBased is a flag to determine if the game is turn based or real-time.
+	TurnBased   bool
 	Turn        TurnState
 	TurnCounter int
-	Player      *Player
-	Creatures   []*Creature
-	Images      map[string]*firefly.Image
+
+	// Player and Creatures
+	Player    *Player
+	Creatures []*Creature
+
+	// Images that are cached for space efficiency. Used for tiles and creatures.
+	Images map[string]*firefly.Image
+
+	// UseFOV is a flag to determine if the game should use Field of View.
+	UseFOV bool
 }
 
 var currentGame *Game
@@ -53,12 +63,12 @@ func (g *Game) AddCreature(c *Creature) {
 func (g *Game) Update() error {
 	g.TurnCounter++
 	if g.TurnCounter%g.Player.GetSpeed() == 0 {
-		if g.Turn == PlayerTurn {
+		if g.Turn == PlayerTurn || !g.TurnBased {
 			g.Player.Update()
 			g.Turn = CreatureTurn
 		}
 	}
-	if g.Turn == CreatureTurn {
+	if g.Turn == CreatureTurn || !g.TurnBased {
 		for _, c := range g.Creatures {
 			if g.TurnCounter%c.GetSpeed() == 0 {
 				c.Update()

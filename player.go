@@ -36,11 +36,14 @@ func (p *Player) Update() {
 	index := level.GetIndexFromXY(pos.X+x, pos.Y+y)
 	tile := level.Tiles[index]
 
+	if g.UseFOV {
+		computeFoV(*pos, level.Tiles)
+	}
+
 	if !tile.Blocked {
 		level.Tiles[level.GetIndexFromXY(pos.X, pos.Y)].Blocked = false
 		g.Player.Move(x, y)
 		level.Tiles[index].Blocked = true
-		//level.PlayerFoV.Compute(level, pos.X, pos.Y, 8)
 	} else if x != 0 || y != 0 {
 		//if level.Tiles[index].TileType != WALL {
 		// Its a tile with a creature -- now what?
@@ -48,6 +51,4 @@ func (p *Player) Update() {
 		//AttackSystem(g, pos, &monsterPosition)
 		//}
 	}
-
-	//g.Turn = CreatureTurn
 }

@@ -29,7 +29,8 @@ func (c *Character) GetPosition() *Position {
 }
 
 func (c *Character) SetPosition(pos *Position) {
-	c.pos = *pos
+	c.pos.X = pos.X
+	c.pos.Y = pos.Y
 }
 
 func (c *Character) Move(dx, dy int) {
