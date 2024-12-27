@@ -4,8 +4,17 @@ import (
 	"github.com/firefly-zero/firefly-go/firefly"
 )
 
+type CreatureBehavior int
+
+const (
+	CreatureIgnore CreatureBehavior = iota
+	CreatureApproach
+	CreatureAvoid
+)
+
 type Creature struct {
 	*Character
+	CurrentBehavior CreatureBehavior
 }
 
 func NewCreature(img *firefly.Image, speed int) *Creature {
@@ -17,7 +26,18 @@ func NewCreature(img *firefly.Image, speed int) *Creature {
 	}
 }
 
+func (c *Creature) SetBehavior(b CreatureBehavior) {
+	c.CurrentBehavior = b
+}
+
 func (c *Creature) Update() {
+	switch c.CurrentBehavior {
+	case CreatureApproach:
+		c.Approach()
+	}
+}
+
+func (c *Creature) Approach() {
 	l := CurrentGame().Map.CurrentLevel
 	playerPosition := CurrentGame().Player.GetPosition()
 	creaturePos := c.GetPosition()
@@ -30,14 +50,13 @@ func (c *Creature) Update() {
 			// The creature is right next to the player. Now what?
 			// AttackSystem(game, creaturePos, &playerPosition)
 		} else {
-			astar := AStar{}
-			path := astar.GetPath(l, creaturePos, playerPosition)
+			path := AStar{}.GetPath(l, creaturePos, playerPosition)
 			if len(path) > 1 {
 				nextTile := l.Tiles[l.GetIndexFromXY(path[1].X, path[1].Y)]
 				if !nextTile.Blocked {
 					l.Tiles[l.GetIndexFromXY(creaturePos.X, creaturePos.Y)].Blocked = false
-					creaturePos.X = path[1].X
-					creaturePos.Y = path[1].Y
+
+					c.MoveTo(Position{X: path[1].X, Y: path[1].Y})
 					nextTile.Blocked = true
 				}
 			}

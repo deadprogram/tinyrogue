@@ -28,6 +28,7 @@ func boot() {
 
 	monsterImage := firefly.LoadFile("monster", nil).Image()
 	monster := tinyrogue.NewCreature(&monsterImage, 60)
+	monster.SetBehavior(tinyrogue.CreatureApproach)
 
 	game.SetData(tinyrogue.NewGameData(16, 10))
 	game.SetMap(tinyrogue.NewGameMap())
@@ -36,11 +37,11 @@ func boot() {
 	game.AddCreature(monster)
 
 	// set player initial position
-	entrance := &tinyrogue.Position{X: 1, Y: 1}
+	entrance := tinyrogue.Position{X: 1, Y: 1}
 	player.MoveTo(entrance)
 
 	// set monster initial position
-	monsterPos := &tinyrogue.Position{X: 12, Y: 7}
+	monsterPos := tinyrogue.Position{X: 12, Y: 7}
 	monster.MoveTo(monsterPos)
 }
 
@@ -50,7 +51,4 @@ func update() {
 
 func render() {
 	game.Render()
-}
-
-func main() {
 }

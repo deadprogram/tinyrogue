@@ -28,18 +28,14 @@ func (c *Character) GetPosition() *Position {
 	return &c.pos
 }
 
-func (c *Character) SetPosition(pos *Position) {
-	c.pos.X = pos.X
-	c.pos.Y = pos.Y
-}
-
 func (c *Character) Move(dx, dy int) {
 	c.pos.X += dx
 	c.pos.Y += dy
 }
 
-func (c *Character) MoveTo(pos *Position) {
-	c.pos = *pos
+func (c *Character) MoveTo(pos Position) {
+	c.pos.X = pos.X
+	c.pos.Y = pos.Y
 }
 
 func (c *Character) Draw() {
