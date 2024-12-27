@@ -36,6 +36,8 @@ func boot() {
 	game.SetPlayer(player)
 	game.AddCreature(monster)
 
+	game.SetActionSystem(&CombatSystem{})
+
 	// set player initial position
 	entrance := tinyrogue.Position{X: 1, Y: 1}
 	player.MoveTo(entrance)
@@ -51,4 +53,11 @@ func update() {
 
 func render() {
 	game.Render()
+}
+
+type CombatSystem struct {
+}
+
+func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.Character) {
+	firefly.LogDebug("Fight!")
 }

@@ -22,6 +22,8 @@ type Game struct {
 
 	// UseFOV is a flag to determine if the game should use Field of View.
 	UseFOV bool
+
+	ActionSystem Actionable
 }
 
 var currentGame *Game
@@ -52,6 +54,10 @@ func (g *Game) SetData(d GameData) {
 
 func (g *Game) SetPlayer(p *Player) {
 	g.Player = p
+}
+
+func (g *Game) SetActionSystem(a Actionable) {
+	g.ActionSystem = a
 }
 
 func (g *Game) AddCreature(c *Creature) {
@@ -104,4 +110,18 @@ func (g *Game) Layout(w, h int) (int, int) {
 
 func CurrentGame() *Game {
 	return currentGame
+}
+
+func (g *Game) GetCreatureForTile(index int) *Creature {
+	for _, c := range g.Creatures {
+		pos := c.GetPosition()
+		if g.GetIndexFromXY(pos.X, pos.Y) == index {
+			return c
+		}
+	}
+	return nil
+}
+
+func (g *Game) GetIndexFromXY(x int, y int) int {
+	return (y * g.Data.Cols) + x
 }

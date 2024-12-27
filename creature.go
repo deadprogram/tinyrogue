@@ -13,13 +13,13 @@ const (
 )
 
 type Creature struct {
-	*Character
+	*character
 	CurrentBehavior CreatureBehavior
 }
 
 func NewCreature(img *firefly.Image, speed int) *Creature {
 	return &Creature{
-		Character: &Character{
+		character: &character{
 			Image: img,
 			speed: speed,
 		},
@@ -45,10 +45,13 @@ func (c *Creature) Approach() {
 	//creatureFoV := fov.New()
 	//creatureFoV.Compute(&l, creaturePos.X, creaturePos.Y, 8)
 	//if creatureFoV.IsVisible(playerPosition.X, playerPosition.Y) {
-	if true {
+	isVisible := true
+	if isVisible {
 		if creaturePos.GetManhattanDistance(playerPosition) == 1 {
 			// The creature is right next to the player. Now what?
-			// AttackSystem(game, creaturePos, &playerPosition)
+			if CurrentGame().ActionSystem != nil {
+				CurrentGame().ActionSystem.Action(CurrentGame().Player, c)
+			}
 		} else {
 			path := AStar{}.GetPath(l, creaturePos, playerPosition)
 			if len(path) > 1 {

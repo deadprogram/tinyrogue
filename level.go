@@ -46,8 +46,7 @@ func NewLevel() Level {
 // GetIndexFromXY gets the index of the map array from a given X,Y TILE coordinate.
 // This coordinate is logical tiles, not pixels.
 func (level *Level) GetIndexFromXY(x int, y int) int {
-	gd := CurrentGame().Data
-	return (y * gd.Cols) + x
+	return CurrentGame().GetIndexFromXY(x, y)
 }
 
 // createTiles creates a map of all walls as a baseline for carving out a level.

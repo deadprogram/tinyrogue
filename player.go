@@ -3,12 +3,12 @@ package tinyrogue
 import "github.com/firefly-zero/firefly-go/firefly"
 
 type Player struct {
-	*Character
+	*character
 }
 
 func NewPlayer(img *firefly.Image, speed int) *Player {
 	return &Player{
-		Character: &Character{
+		character: &character{
 			Image: img,
 			speed: speed,
 		},
@@ -41,14 +41,19 @@ func (p *Player) Update() {
 	}
 
 	if !tile.Blocked {
+		// player is moving away from this tile
 		level.Tiles[level.GetIndexFromXY(pos.X, pos.Y)].Blocked = false
 		g.Player.Move(x, y)
+
+		// player has moved to this tile, so it is now blocked
 		level.Tiles[index].Blocked = true
 	} else if x != 0 || y != 0 {
-		//if level.Tiles[index].TileType != WALL {
-		// Its a tile with a creature -- now what?
-		// monsterPosition := Position{X: pos.X + x, Y: pos.Y + y}
-		//AttackSystem(g, pos, &monsterPosition)
-		//}
+		if level.Tiles[index].TileType != WALL {
+			// Its a tile with a creature -- now what?
+			creature := g.GetCreatureForTile(index)
+			if creature != nil && g.ActionSystem != nil {
+				g.ActionSystem.Action(g.Player, creature)
+			}
+		}
 	}
 }
