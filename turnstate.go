@@ -5,7 +5,7 @@ type TurnState int
 const (
 	BeforePlayerAction = iota
 	PlayerTurn
-	MonsterTurn
+	CreatureTurn
 	GameOver
 )
 
@@ -14,8 +14,8 @@ func GetNextState(state TurnState) TurnState {
 	case BeforePlayerAction:
 		return PlayerTurn
 	case PlayerTurn:
-		return MonsterTurn
-	case MonsterTurn:
+		return CreatureTurn
+	case CreatureTurn:
 		return BeforePlayerAction
 	case GameOver:
 		return GameOver

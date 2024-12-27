@@ -5,6 +5,7 @@ import "github.com/firefly-zero/firefly-go/firefly"
 type Character struct {
 	Image *firefly.Image
 	pos   Position
+	speed int
 }
 
 func NewCharacter() *Character {
@@ -13,6 +14,14 @@ func NewCharacter() *Character {
 
 func (c *Character) SetImage(img *firefly.Image) {
 	c.Image = img
+}
+
+func (c *Character) GetSpeed() int {
+	return c.speed
+}
+
+func (c *Character) SetSpeed(speed int) {
+	c.speed = speed
 }
 
 func (c *Character) GetPosition() *Position {
