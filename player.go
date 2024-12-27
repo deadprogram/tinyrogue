@@ -4,6 +4,7 @@ import "github.com/firefly-zero/firefly-go/firefly"
 
 type Player struct {
 	*character
+	ViewRadius int
 }
 
 func NewPlayer(name string, img *firefly.Image, speed int) *Player {
@@ -38,6 +39,7 @@ func (p *Player) Update() {
 	tile := level.Tiles[index]
 
 	if g.UseFOV {
+		level.SetViewRadius(p.ViewRadius)
 		level.RayCast(pos.X, pos.Y)
 	}
 

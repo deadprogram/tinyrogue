@@ -25,6 +25,7 @@ func boot() {
 
 	playerImage := firefly.LoadFile("player", nil).Image()
 	player := tinyrogue.NewPlayer("Player", &playerImage, 5)
+	player.ViewRadius = 4
 
 	monsterImage := firefly.LoadFile("monster", nil).Image()
 	monster := tinyrogue.NewCreature("Monster", &monsterImage, 60)

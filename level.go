@@ -27,9 +27,10 @@ type MapTile struct {
 
 // Level holds the tile information for a complete dungeon level.
 type Level struct {
-	Tiles     []*MapTile
-	Rooms     []Rect
-	playerFoV *FieldOfVision
+	Tiles      []*MapTile
+	Rooms      []Rect
+	playerFoV  *FieldOfVision
+	ViewRadius int
 }
 
 // NewLevel creates a new game level in a dungeon.
@@ -40,7 +41,6 @@ func NewLevel() Level {
 	l.GenerateLevelTiles()
 	l.playerFoV = &FieldOfVision{}
 	l.playerFoV.InitializeFOV()
-	l.playerFoV.SetTorchRadius(4)
 
 	return l
 }
@@ -199,6 +199,10 @@ func (level *Level) DrawLevel() {
 
 func (level *Level) RayCast(playerX, playerY int) {
 	level.playerFoV.RayCast(playerX, playerY, level)
+}
+
+func (level *Level) SetViewRadius(radius int) {
+	level.playerFoV.SetTorchRadius(radius)
 }
 
 func (level *Level) Dump() {
