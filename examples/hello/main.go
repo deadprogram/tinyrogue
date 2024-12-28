@@ -23,7 +23,7 @@ func boot() {
 	game.Images["wall"] = &wallImage
 
 	playerImage := firefly.LoadFile("player", nil).Image()
-	player := tinyrogue.NewPlayer("Player", &playerImage, 5)
+	player := tinyrogue.NewPlayer("Player", "player", &playerImage, 5)
 
 	game.SetData(tinyrogue.NewGameData(16, 10, 16, 16))
 	game.SetMap(tinyrogue.NewGameMap())
@@ -31,7 +31,7 @@ func boot() {
 	game.SetPlayer(player)
 
 	// set player initial position
-	entrance := tinyrogue.Position{X: 1, Y: 1}
+	entrance := tinyrogue.Position{X: 2, Y: 2}
 	player.MoveTo(entrance)
 }
 
