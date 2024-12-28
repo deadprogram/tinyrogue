@@ -35,13 +35,18 @@ func (p *Player) Update() {
 
 	pos := g.Player.GetPosition()
 	level := g.Map.CurrentLevel
-	index := level.GetIndexFromXY(pos.X+x, pos.Y+y)
-	tile := level.Tiles[index]
 
 	if g.UseFOV {
 		level.SetViewRadius(p.ViewRadius)
 		level.RayCast(pos.X, pos.Y)
 	}
+
+	if !level.InBounds(pos.X+x, pos.Y+y) {
+		return
+	}
+
+	index := level.GetIndexFromXY(pos.X+x, pos.Y+y)
+	tile := level.Tiles[index]
 
 	if !tile.Blocked {
 		// player is moving away from this tile
