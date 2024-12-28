@@ -7,6 +7,9 @@ import (
 func updateGameover() {
 	pause++
 	if pause > 180 {
+		removeGhost()
+		startGame()
+
 		scene = gameStart
 		pause = 0
 	}

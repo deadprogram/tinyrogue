@@ -80,21 +80,10 @@ func render() {
 
 func setupGame() {
 	game = tinyrogue.NewGame()
+	game.UseFOV = true
+	game.SetActionSystem(&CombatSystem{})
 
-	floorImage := firefly.LoadFile("floor", nil).Image()
-	game.Images["floor"] = &floorImage
-
-	wallImage := firefly.LoadFile("wall", nil).Image()
-	game.Images["wall"] = &wallImage
-
-	playerImage := firefly.LoadFile("player", nil).Image()
-	player = NewAdventurer("Sir Shaky", &playerImage, 5)
-	player.ViewRadius = 2
-	game.SetPlayer(player)
-
-	ghostImage := firefly.LoadFile("ghost", nil).Image()
-	game.Images["ghost"] = &ghostImage
-	createGhost()
+	loadGameImages()
 
 	gd := tinyrogue.NewGameData(16, 10, 16, 16)
 	gd.MinSize = 3
@@ -102,14 +91,17 @@ func setupGame() {
 	gd.MaxRooms = 32
 	game.SetData(gd)
 
-	game.SetMap(tinyrogue.NewGameMap())
-	game.UseFOV = true
+	startGame()
+}
 
-	game.SetActionSystem(&CombatSystem{})
+func startGame() {
+	game.SetMap(tinyrogue.NewGameMap())
+
+	createPlayer()
+	createGhost()
 
 	// set player initial position
-	entrance := tinyrogue.Position{X: 1, Y: 2}
-	player.MoveTo(entrance)
+	player.MoveTo(findSpawnLocation())
 
 	// set monster initial position
 	ghost.MoveTo(findSpawnLocation())
@@ -125,8 +117,35 @@ func findSpawnLocation() tinyrogue.Position {
 	}
 }
 
+func loadGameImages() {
+	floorImage := firefly.LoadFile("floor", nil).Image()
+	game.Images["floor"] = &floorImage
+
+	wallImage := firefly.LoadFile("wall", nil).Image()
+	game.Images["wall"] = &wallImage
+
+	playerImage := firefly.LoadFile("player", nil).Image()
+	game.Images["player"] = &playerImage
+
+	ghostImage := firefly.LoadFile("ghost", nil).Image()
+	game.Images["ghost"] = &ghostImage
+}
+
+func createPlayer() {
+	player = NewAdventurer("Sir Shaky", game.Images["player"], 5)
+	player.ViewRadius = 2
+	game.SetPlayer(player)
+}
+
 func createGhost() {
 	ghost = NewGhost("Ghost", game.Images["ghost"], 60)
 	ghost.SetBehavior(tinyrogue.CreatureApproach)
 	game.AddCreature(ghost)
+}
+
+func removeGhost() {
+	game.RemoveCreature(ghost)
+	level := game.Map.CurrentLevel
+	creaturePos := ghost.GetPosition()
+	level.Block(creaturePos.X, creaturePos.Y, false)
 }

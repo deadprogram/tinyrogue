@@ -1,6 +1,9 @@
 package main
 
-import "github.com/firefly-zero/firefly-go/firefly"
+import (
+	"github.com/deadprogram/tinyrogue"
+	"github.com/firefly-zero/firefly-go/firefly"
+)
 
 // logic for the start scene
 func updateStart() {
@@ -10,6 +13,9 @@ func updateStart() {
 		if buttons.N || buttons.S || buttons.E || buttons.W {
 			scene = gamePlay
 			pause = 0
+
+			game.Turn = tinyrogue.PlayerTurn
+			game.TurnCounter = 0
 		}
 	}
 }

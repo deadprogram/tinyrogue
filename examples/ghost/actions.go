@@ -108,10 +108,7 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 				firefly.LogDebug("Ghost defeated!")
 
 				// Remove ghost from the game
-				game.RemoveCreature(ghost)
-				level := game.Map.CurrentLevel
-				creaturePos := ghost.GetPosition()
-				level.Block(creaturePos.X, creaturePos.Y, false)
+				removeGhost()
 
 				respawnGhost = true
 			}
