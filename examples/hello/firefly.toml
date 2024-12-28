@@ -4,6 +4,6 @@ author_name = "tinyrogue"
 app_name = "Hello Demo"
 
 [files]
-floor = { path = "floor.png" }
-wall = { path = "wall.png" }
+floor = { path = "forest.png" }
+wall = { path = "tree.png" }
 player = { path = "gopher.png" }
