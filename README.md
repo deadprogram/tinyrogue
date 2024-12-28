@@ -24,6 +24,8 @@ Experimental package for creating roguelike games using TinyGo on [Firefly Zero]
 - Multiple levels
 - World map
 - Creature spawning
+- Level entrances/exits
+- popup messages e.g. "A wild gopher has appeared!"
 
 ## Useful tools
 
