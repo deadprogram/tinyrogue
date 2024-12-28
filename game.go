@@ -25,6 +25,9 @@ type Game struct {
 
 	// ActionSystem is the interface for the game to handle actions between characters.
 	ActionSystem Actionable
+
+	showMessage bool
+	message     *Message
 }
 
 var currentGame *Game
@@ -67,7 +70,15 @@ func (g *Game) AddCreature(c Character) {
 
 // Update is called on each frame loop
 // The default value is 1/60 [s]
-func (g *Game) Update() error {
+func (g *Game) Update() {
+	if g.showMessage {
+		g.message.Update()
+		if !g.message.Confirmed {
+			return
+		}
+		g.showMessage = false
+	}
+
 	g.TurnCounter++
 	if g.TurnCounter%g.Player.GetSpeed() == 0 {
 		if g.Turn == PlayerTurn || !g.TurnBased {
@@ -83,12 +94,12 @@ func (g *Game) Update() error {
 		}
 		g.Turn = PlayerTurn
 	}
-
-	return nil
 }
 
 // Draw is called each on each frame loop
 func (g *Game) Render() {
+	firefly.ClearScreen(firefly.ColorBlack)
+
 	// Draw the Map
 	level := g.Map.CurrentLevel
 	level.DrawLevel()
@@ -100,6 +111,12 @@ func (g *Game) Render() {
 	for _, c := range g.Creatures {
 		if c.IsVisible() || !g.UseFOV {
 			c.Draw()
+		}
+	}
+
+	if g.showMessage {
+		if g.message != nil {
+			g.message.Draw()
 		}
 	}
 }
@@ -130,4 +147,9 @@ func (g *Game) GetCreatureForTile(index int) Character {
 // GetIndexFromXY returns the index for the given x and y coordinates.
 func (g *Game) GetIndexFromXY(x int, y int) int {
 	return (y * g.Data.Cols) + x
+}
+
+func (g *Game) ShowMessage(msg *Message) {
+	g.showMessage = true
+	g.message = msg
 }
