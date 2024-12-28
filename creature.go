@@ -20,10 +20,11 @@ type Creature struct {
 }
 
 // NewCreature creates a new Creature and initializes the data
-func NewCreature(name string, img *firefly.Image, speed int) *Creature {
+func NewCreature(name string, kind string, img *firefly.Image, speed int) *Creature {
 	return &Creature{
 		character: &character{
 			name:  name,
+			kind:  kind,
 			Image: img,
 			speed: speed,
 		},

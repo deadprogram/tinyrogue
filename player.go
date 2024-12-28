@@ -7,10 +7,11 @@ type Player struct {
 	ViewRadius int
 }
 
-func NewPlayer(name string, img *firefly.Image, speed int) *Player {
+func NewPlayer(name string, kind string, img *firefly.Image, speed int) *Player {
 	return &Player{
 		character: &character{
 			name:  name,
+			kind:  kind,
 			Image: img,
 			speed: speed,
 		},

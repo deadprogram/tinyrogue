@@ -5,6 +5,7 @@ import "github.com/firefly-zero/firefly-go/firefly"
 // Character is the interface for all characters in the game.
 type Character interface {
 	Name() string
+	Kind() string
 	SetImage(img *firefly.Image)
 	GetSpeed() int
 	SetSpeed(speed int)
@@ -20,6 +21,7 @@ type Character interface {
 // character is the base type for all characters in the game.
 type character struct {
 	name  string
+	kind  string
 	Image *firefly.Image
 	pos   Position
 	speed int
@@ -28,6 +30,11 @@ type character struct {
 // Name returns the name of the character.
 func (c *character) Name() string {
 	return c.name
+}
+
+// Kind returns the kind of the character.
+func (c *character) Kind() string {
+	return c.kind
 }
 
 // SetImage sets the image for the character.
