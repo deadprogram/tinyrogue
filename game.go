@@ -77,6 +77,15 @@ func (g *Game) RemoveCreature(c Character) {
 	}
 }
 
+func (g *Game) GetCreatureByName(name string) Character {
+	for _, creature := range g.Creatures {
+		if creature.Name() == name {
+			return creature
+		}
+	}
+	return nil
+}
+
 // Update is called on each frame loop
 // The default value is 1/60 [s]
 func (g *Game) Update() {
