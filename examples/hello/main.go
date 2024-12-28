@@ -14,7 +14,6 @@ func init() {
 var game *tinyrogue.Game
 
 func boot() {
-	firefly.LogDebug("Boot")
 	game = tinyrogue.NewGame()
 
 	floorImage := firefly.LoadFile("floor", nil).Image()
