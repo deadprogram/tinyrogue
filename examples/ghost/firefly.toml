@@ -8,4 +8,5 @@ floor = { path = "floor.png" }
 wall = { path = "wall.png" }
 player = { path = "player.png" }
 ghost = { path = "ghost.png" }
-font = { path = "font.fff", url = "https://fonts.fireflyzero.com/fonts/ascii/eg_6x10.fff" }
+titlefont = { path = "font.fff", url = "https://fonts.fireflyzero.com/fonts/ascii/eg_6x10.fff" }
+msgfont = { path = "msgfont.fff", url = "https://fonts.fireflyzero.com/fonts/ascii/eg_4x6.fff" }

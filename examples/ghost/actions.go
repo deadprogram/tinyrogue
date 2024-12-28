@@ -82,8 +82,15 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 		damageRoll := tinyrogue.GetDiceRoll(attackerWeaponClass)
 
 		firefly.LogDebug(attacker.Name() + " uses " + attackerWeaponName + " on " + defender.Name() + " and hits for " + strconv.Itoa(damageRoll) + " health.")
+		msg := tinyrogue.NewMessage(attacker.Name()+" uses "+attackerWeaponName+" on "+defender.Name(),
+			&msgFont, firefly.ColorRed, firefly.ColorBlack, true)
+		msg.Text2 = "and hits for " + strconv.Itoa(damageRoll) + " damage!"
+		tinyrogue.CurrentGame().ShowMessage(msg)
 	} else {
 		firefly.LogDebug(attacker.Name() + " tries " + attackerWeaponName + " on " + defender.Name() + " and misses.")
+		msg := tinyrogue.NewMessage(attacker.Name()+" tries "+attackerWeaponName+" on "+defender.Name()+" and misses.",
+			&msgFont, firefly.ColorRed, firefly.ColorBlack, true)
+		tinyrogue.CurrentGame().ShowMessage(msg)
 	}
 
 	// TODO: Implement health reduction

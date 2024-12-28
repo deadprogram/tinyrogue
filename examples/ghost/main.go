@@ -15,7 +15,9 @@ var (
 	scene = gameStart
 
 	titleFont firefly.Font
-	game      *tinyrogue.Game
+	msgFont   firefly.Font
+
+	game *tinyrogue.Game
 
 	player *Adventurer
 	ghost  *Ghost
@@ -28,7 +30,8 @@ func init() {
 }
 
 func boot() {
-	titleFont = firefly.LoadFile("font", nil).Font()
+	titleFont = firefly.LoadFile("titlefont", nil).Font()
+	msgFont = firefly.LoadFile("msgfont", nil).Font()
 
 	setupGame()
 }
@@ -49,7 +52,6 @@ func render() {
 	case gameStart:
 		renderStart()
 	case gamePlay:
-		firefly.ClearScreen(firefly.ColorBlack)
 		game.Render()
 	case gameOver:
 		renderGameover()
