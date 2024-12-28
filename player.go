@@ -17,6 +17,13 @@ func NewPlayer(name string, img *firefly.Image, speed int) *Player {
 	}
 }
 
+func (p *Player) IsVisible() bool {
+	return true
+}
+
+func (p *Player) SetVisible(visible bool) {
+}
+
 func (p *Player) Update() {
 	g := CurrentGame()
 	x, y := 0, 0

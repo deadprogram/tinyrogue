@@ -30,6 +30,14 @@ func NewCreature(name string, img *firefly.Image, speed int) *Creature {
 	}
 }
 
+func (c *Creature) IsVisible() bool {
+	return c.Visible
+}
+
+func (c *Creature) SetVisible(visible bool) {
+	c.Visible = visible
+}
+
 // SetBehavior sets the behavior of the creature.
 func (c *Creature) SetBehavior(b CreatureBehavior) {
 	c.CurrentBehavior = b

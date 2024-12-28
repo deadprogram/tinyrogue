@@ -79,7 +79,7 @@ func (f *FieldOfVision) RayCast(playerX, playerY int, m *Level) {
 			// any creature on this tile should be visible
 			creature := CurrentGame().GetCreatureForTile(m.GetIndexFromXY(roundedX, roundedY))
 			if creature != nil {
-				creature.Visible = true
+				creature.SetVisible(true)
 			}
 
 			if tile.TileType == WALL {

@@ -12,6 +12,9 @@ type Character interface {
 	Move(dx, dy int)
 	MoveTo(pos Position)
 	Draw()
+	Update()
+	IsVisible() bool
+	SetVisible(visible bool)
 }
 
 // character is the base type for all characters in the game.

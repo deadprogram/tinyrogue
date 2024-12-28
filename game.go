@@ -14,8 +14,8 @@ type Game struct {
 	TurnCounter int
 
 	// Player and Creatures
-	Player    *Player
-	Creatures []*Creature
+	Player    Character
+	Creatures []Character
 
 	// Images that are cached for space efficiency. Used for tiles and creatures.
 	Images map[string]*firefly.Image
@@ -33,7 +33,7 @@ var currentGame *Game
 func NewGame() *Game {
 	g := &Game{
 		Images:    make(map[string]*firefly.Image),
-		Creatures: make([]*Creature, 0),
+		Creatures: make([]Character, 0),
 	}
 	g.Debug = true
 
@@ -53,7 +53,7 @@ func (g *Game) SetData(d GameData) {
 	g.Data = d
 }
 
-func (g *Game) SetPlayer(p *Player) {
+func (g *Game) SetPlayer(p Character) {
 	g.Player = p
 }
 
@@ -61,7 +61,7 @@ func (g *Game) SetActionSystem(a Actionable) {
 	g.ActionSystem = a
 }
 
-func (g *Game) AddCreature(c *Creature) {
+func (g *Game) AddCreature(c Character) {
 	g.Creatures = append(g.Creatures, c)
 }
 
@@ -98,7 +98,7 @@ func (g *Game) Render() {
 
 	// Draw the creatures
 	for _, c := range g.Creatures {
-		if c.Visible || !g.UseFOV {
+		if c.IsVisible() || !g.UseFOV {
 			c.Draw()
 		}
 	}
@@ -117,7 +117,7 @@ func CurrentGame() *Game {
 }
 
 // GetCreatureForTile returns the creature for the given tile index.
-func (g *Game) GetCreatureForTile(index int) *Creature {
+func (g *Game) GetCreatureForTile(index int) Character {
 	for _, c := range g.Creatures {
 		pos := c.GetPosition()
 		if g.GetIndexFromXY(pos.X, pos.Y) == index {
