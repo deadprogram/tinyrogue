@@ -6,16 +6,20 @@ Experimental package for creating roguelike games using TinyGo on [Firefly Zero]
 
 ## Features
 
-<img src="./images/ghost.png" alt="ghost example screenshot" width="480"/>
-
 ### Complete
+
+<img src="./images/ghost.png" alt="ghost example screenshot" width="480"/>
 
 - Customizable images with cache for tiles such as walls and floors
 - Generative maps
 - Field of View for torch-like illumination
+
+<img src="./images/ghost-combat.png" alt="ghost example screenshot" width="480"/>
+
 - Creature behavior is configurable
 - Creatures approach Player using shortest path astar algorithm
 - Configurable action system for combat, spells, etc.
+- Popup messages e.g. "A wild gopher has appeared!"
 
 ### TODO
 
@@ -25,7 +29,6 @@ Experimental package for creating roguelike games using TinyGo on [Firefly Zero]
 - World map
 - Creature spawning
 - Level entrances/exits
-- popup messages e.g. "A wild gopher has appeared!"
 
 ## Useful tools
 
