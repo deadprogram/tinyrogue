@@ -20,8 +20,8 @@ var (
 
 	game *tinyrogue.Game
 
-	player       *Adventurer
-	ghost        *Ghost
+	player *Adventurer
+
 	respawnGhost bool
 	respawnDelay int
 )
@@ -55,7 +55,7 @@ func update() {
 		if respawnGhost {
 			respawnDelay++
 			if respawnDelay > 60 {
-				createGhost()
+				ghost := createGhost()
 
 				ghost.MoveTo(findSpawnLocation())
 				respawnGhost = false
@@ -98,7 +98,7 @@ func startGame() {
 	game.SetMap(tinyrogue.NewGameMap())
 
 	createPlayer()
-	createGhost()
+	ghost := createGhost()
 
 	// set player initial position
 	player.MoveTo(findSpawnLocation())
@@ -132,20 +132,30 @@ func loadGameImages() {
 }
 
 func createPlayer() {
-	player = NewAdventurer("Sir Shaky", game.Images["player"], 5)
+	player = NewAdventurer("Sir Scaredy", game.Images["player"], 5)
 	player.ViewRadius = 2
 	game.SetPlayer(player)
 }
 
-func createGhost() {
-	ghost = NewGhost("Ghost", game.Images["ghost"], 60)
+func createGhost() *Ghost {
+	ghost := NewGhost("Ghost", game.Images["ghost"], 60)
 	ghost.SetBehavior(tinyrogue.CreatureApproach)
 	game.AddCreature(ghost)
+
+	return ghost
 }
 
-func removeGhost() {
-	game.RemoveCreature(ghost)
+func removeAllGhosts() {
+	for _, c := range game.Creatures {
+		if gh, ok := c.(*Ghost); ok {
+			removeGhost(gh)
+		}
+	}
+}
+
+func removeGhost(gh *Ghost) {
+	game.RemoveCreature(gh)
 	level := game.Map.CurrentLevel
-	creaturePos := ghost.GetPosition()
+	creaturePos := gh.GetPosition()
 	level.Block(creaturePos.X, creaturePos.Y, false)
 }

@@ -66,8 +66,10 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 		attackerWeaponClass = player.WeaponClass()
 		attackerWeaponName = player.WeaponName()
 	case "ghost":
-		attackerWeaponClass = ghost.WeaponClass()
-		attackerWeaponName = ghost.WeaponName()
+		c := tinyrogue.CurrentGame().GetCreatureByName(attacker.Name())
+		gh := c.(*Ghost)
+		attackerWeaponClass = gh.WeaponClass()
+		attackerWeaponName = gh.WeaponName()
 	default:
 		firefly.LogDebug("Unknown attacker kind: " + attacker.Kind())
 	}
@@ -76,7 +78,8 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 	case "adventurer":
 		defenderArmorClass = player.ArmorClass()
 	case "ghost":
-		defenderArmorClass = ghost.ArmorClass()
+		gh := defender.(*Ghost)
+		defenderArmorClass = gh.ArmorClass()
 	default:
 		firefly.LogDebug("Unknown defender kind: " + defender.Kind())
 	}
@@ -101,15 +104,15 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 				game.Turn = tinyrogue.GameOver
 			}
 		case "ghost":
-			remainingHealth := ghost.Damage(damageRoll)
+			gh := defender.(*Ghost)
+			remainingHealth := gh.Damage(damageRoll)
 			if remainingHealth <= 0 {
 				// Ghost defeated!
-				msg2 = "Critical hit for " + strconv.Itoa(damageRoll) + " damage! Ghost defeated!"
-				firefly.LogDebug("Ghost defeated!")
+				msg2 = "Critical hit for " + strconv.Itoa(damageRoll) + " damage! " + gh.Name() + " defeated!"
+				firefly.LogDebug(msg2)
 
 				// Remove ghost from the game
-				removeGhost()
-
+				removeGhost(gh)
 				respawnGhost = true
 			}
 		}
