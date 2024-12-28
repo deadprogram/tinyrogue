@@ -1,14 +1,14 @@
 # tinyrogue
 
-![example screenshot](./images/hello2.png)
+<img src="./images/hello.png" alt="hello example screenshot" width="480"/>
 
 Experimental package for creating roguelike games using TinyGo on [Firefly Zero](https://fireflyzero.com/).
 
 ## Features
 
-### Complete
+<img src="./images/ghost.png" alt="ghost example screenshot" width="480"/>
 
-![example screenshot](./images/hello.png)
+### Complete
 
 - Customizable images with cache for tiles such as walls and floors
 - Generative maps
