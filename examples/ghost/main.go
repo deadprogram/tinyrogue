@@ -80,7 +80,7 @@ func setupGame() {
 	game.SetData(gd)
 
 	game.SetMap(tinyrogue.NewGameMap())
-	//game.UseFOV = true
+	game.UseFOV = true
 
 	game.SetPlayer(player)
 	game.AddCreature(ghost)
