@@ -69,7 +69,7 @@ func setupGame() {
 
 	playerImage := firefly.LoadFile("player", nil).Image()
 	player = NewAdventurer("Sir Shaky", &playerImage, 5)
-	player.ViewRadius = 4
+	player.ViewRadius = 2
 
 	ghostImage := firefly.LoadFile("ghost", nil).Image()
 	ghost = NewGhost("Ghost", &ghostImage, 60)
@@ -94,6 +94,15 @@ func setupGame() {
 	player.MoveTo(entrance)
 
 	// set monster initial position
-	ghostPos := tinyrogue.Position{X: 12, Y: 7}
-	ghost.MoveTo(ghostPos)
+	ghost.MoveTo(findSpawnLocation())
+}
+
+func findSpawnLocation() tinyrogue.Position {
+	l := game.Map.CurrentLevel
+	for {
+		pos, free := l.RandomLocation()
+		if free {
+			return pos
+		}
+	}
 }
