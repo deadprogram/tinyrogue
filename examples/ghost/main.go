@@ -63,11 +63,11 @@ func setupGame() {
 	game.Images["wall"] = &wallImage
 
 	playerImage := firefly.LoadFile("player", nil).Image()
-	player := tinyrogue.NewPlayer("Player", &playerImage, 5)
+	player := NewAdventurer("Sir Shaky", &playerImage, 5)
 	player.ViewRadius = 4
 
 	ghostImage := firefly.LoadFile("ghost", nil).Image()
-	ghost := tinyrogue.NewCreature("Ghost", &ghostImage, 60)
+	ghost := NewGhost("Ghost", &ghostImage, 60)
 	ghost.SetBehavior(tinyrogue.CreatureApproach)
 
 	gd := tinyrogue.NewGameData(16, 10, 16, 16)
