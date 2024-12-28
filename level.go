@@ -128,7 +128,7 @@ func (level *Level) GenerateLevelTiles() {
 
 				coinflip := GetDiceRoll(2)
 
-				if coinflip == 2 {
+				if coinflip == 1 {
 					level.createHorizontalTunnel(prevX, newX, prevY)
 					level.createVerticalTunnel(prevY, newY, newX)
 				} else {
@@ -199,6 +199,19 @@ func (level *Level) RayCast(playerX, playerY int) {
 
 func (level *Level) SetViewRadius(radius int) {
 	level.playerFoV.SetTorchRadius(radius)
+}
+
+func (level *Level) RandomLocation() (Position, bool) {
+	if len(level.Rooms) == 0 {
+		return Position{}, false
+	}
+	randomRoom := level.Rooms[GetDiceRoll(len(level.Rooms))-1]
+	x, y := randomRoom.Center()
+
+	idx := level.GetIndexFromXY(x, y)
+	tile := level.Tiles[idx]
+
+	return Position{x, y}, !tile.Blocked
 }
 
 func (level *Level) Dump() {
