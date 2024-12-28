@@ -5,15 +5,55 @@ import (
 	"github.com/firefly-zero/firefly-go/firefly"
 )
 
+const (
+	gameStart = "start"
+	gamePlay  = "game"
+	gameOver  = "gameover"
+)
+
+var (
+	scene = gameStart
+
+	titleFont firefly.Font
+	game      *tinyrogue.Game
+)
+
 func init() {
 	firefly.Boot = boot
 	firefly.Update = update
 	firefly.Render = render
 }
 
-var game *tinyrogue.Game
-
 func boot() {
+	titleFont = firefly.LoadFile("font", nil).Font()
+
+	setupGame()
+}
+
+func update() {
+	switch scene {
+	case gameStart:
+		updateStart()
+	case gamePlay:
+		game.Update()
+	case gameOver:
+		updateGameover()
+	}
+}
+
+func render() {
+	switch scene {
+	case gameStart:
+		renderStart()
+	case gamePlay:
+		firefly.ClearScreen(firefly.ColorBlack)
+		game.Render()
+	case gameOver:
+		renderGameover()
+	}
+}
+
+func setupGame() {
 	game = tinyrogue.NewGame()
 
 	floorImage := firefly.LoadFile("floor", nil).Image()
@@ -26,9 +66,9 @@ func boot() {
 	player := tinyrogue.NewPlayer("Player", &playerImage, 5)
 	player.ViewRadius = 4
 
-	monsterImage := firefly.LoadFile("monster", nil).Image()
-	monster := tinyrogue.NewCreature("Monster", &monsterImage, 60)
-	monster.SetBehavior(tinyrogue.CreatureApproach)
+	ghostImage := firefly.LoadFile("ghost", nil).Image()
+	ghost := tinyrogue.NewCreature("Ghost", &ghostImage, 60)
+	ghost.SetBehavior(tinyrogue.CreatureApproach)
 
 	gd := tinyrogue.NewGameData(16, 10, 16, 16)
 	gd.MinSize = 3
@@ -40,7 +80,7 @@ func boot() {
 	game.UseFOV = true
 
 	game.SetPlayer(player)
-	game.AddCreature(monster)
+	game.AddCreature(ghost)
 
 	game.SetActionSystem(&CombatSystem{})
 
@@ -49,21 +89,6 @@ func boot() {
 	player.MoveTo(entrance)
 
 	// set monster initial position
-	monsterPos := tinyrogue.Position{X: 12, Y: 7}
-	monster.MoveTo(monsterPos)
-}
-
-func update() {
-	game.Update()
-}
-
-func render() {
-	game.Render()
-}
-
-type CombatSystem struct {
-}
-
-func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.Character) {
-	firefly.LogDebug(attacker.Name() + " is attacking " + defender.Name())
+	ghostPos := tinyrogue.Position{X: 12, Y: 7}
+	ghost.MoveTo(ghostPos)
 }

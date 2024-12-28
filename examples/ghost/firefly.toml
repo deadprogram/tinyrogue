@@ -1,10 +1,11 @@
 author_id = "tinyrogue"
 app_id = "tinyrogue-ghost"
 author_name = "tinyrogue"
-app_name = "Ghost"
+app_name = "Ghost Castle"
 
 [files]
 floor = { path = "floor.png" }
 wall = { path = "wall.png" }
 player = { path = "player.png" }
-monster = { path = "monster.png" }
+ghost = { path = "ghost.png" }
+font = { path = "font.fff", url = "https://fonts.fireflyzero.com/fonts/ascii/eg_6x10.fff" }
