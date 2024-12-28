@@ -6,6 +6,9 @@ type GameData struct {
 	Rows       int
 	TileWidth  int
 	TileHeight int
+	MinSize    int
+	MaxSize    int
+	MaxRooms   int
 }
 
 // NewGameData creates a fully populated GameData Struct.
@@ -15,6 +18,9 @@ func NewGameData(cols, rows, tilewidth, tileheight int) GameData {
 		Rows:       rows,
 		TileWidth:  tilewidth,
 		TileHeight: tileheight,
+		MinSize:    4,
+		MaxSize:    8,
+		MaxRooms:   20,
 	}
 	return g
 }

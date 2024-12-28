@@ -101,18 +101,14 @@ func (level *Level) createRoom(room Rect) {
 
 // GenerateLevelTiles creates a new Dungeon Level Map.
 func (level *Level) GenerateLevelTiles() {
-	MIN_SIZE := 4
-	MAX_SIZE := 8
-	MAX_ROOMS := 20
-
 	gd := CurrentGame().Data
 	tiles := level.createTiles()
 	level.Tiles = tiles
 	contains_rooms := false
 
-	for idx := 0; idx < MAX_ROOMS; idx++ {
-		w := GetRandomBetween(MIN_SIZE, MAX_SIZE)
-		h := GetRandomBetween(MIN_SIZE, MAX_SIZE)
+	for idx := 0; idx < gd.MaxRooms; idx++ {
+		w := GetRandomBetween(gd.MinSize, gd.MaxSize)
+		h := GetRandomBetween(gd.MinSize, gd.MaxSize)
 		x := GetDiceRoll(gd.Cols - w - 1)
 		y := GetDiceRoll(gd.Rows - h - 1)
 
@@ -173,7 +169,7 @@ func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
 
 func (level *Level) InBounds(x, y int) bool {
 	gd := CurrentGame().Data
-	if x < 0 || x > gd.Cols || y < 0 || y > gd.Rows {
+	if x < 0 || x > gd.Cols-2 || y < 0 || y > gd.Rows-2 {
 		return false
 	}
 	return true
