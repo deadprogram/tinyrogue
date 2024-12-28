@@ -51,11 +51,7 @@ func (c *Creature) Approach() {
 	playerPosition := CurrentGame().Player.GetPosition()
 	creaturePos := c.GetPosition()
 
-	//creatureFoV := fov.New()
-	//creatureFoV.Compute(&l, creaturePos.X, creaturePos.Y, 8)
-	//if creatureFoV.IsVisible(playerPosition.X, playerPosition.Y) {
-	isVisible := true
-	if isVisible {
+	if c.Visible || !CurrentGame().UseFOV {
 		if creaturePos.GetManhattanDistance(playerPosition) == 1 {
 			// The creature is right next to the player. Now what?
 			if CurrentGame().ActionSystem != nil {
