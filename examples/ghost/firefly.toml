@@ -1,0 +1,10 @@
+author_id = "tinyrogue"
+app_id = "tinyrogue-ghost"
+author_name = "tinyrogue"
+app_name = "Ghost"
+
+[files]
+floor = { path = "floor.png" }
+wall = { path = "wall.png" }
+player = { path = "player.png" }
+monster = { path = "monster.png" }
