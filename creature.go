@@ -56,7 +56,7 @@ func (c *Creature) Update() {
 
 // Approach moves the creature towards the player.
 func (c *Creature) Approach() {
-	l := CurrentGame().Map.CurrentLevel
+	level := CurrentGame().Map.CurrentLevel
 	playerPosition := CurrentGame().Player.GetPosition()
 	creaturePos := c.GetPosition()
 
@@ -67,11 +67,11 @@ func (c *Creature) Approach() {
 				CurrentGame().ActionSystem.Action(c, CurrentGame().Player)
 			}
 		} else {
-			path := AStar{}.GetPath(l, creaturePos, playerPosition)
+			path := AStar{}.GetPath(level, creaturePos, playerPosition)
 			if len(path) > 1 {
-				nextTile := l.Tiles[l.GetIndexFromXY(path[1].X, path[1].Y)]
+				nextTile := level.Tiles[level.GetIndexFromXY(path[1].X, path[1].Y)]
 				if !nextTile.Blocked {
-					l.Tiles[l.GetIndexFromXY(creaturePos.X, creaturePos.Y)].Blocked = false
+					level.Block(creaturePos.X, creaturePos.Y, false)
 
 					c.MoveTo(Position{X: path[1].X, Y: path[1].Y})
 					nextTile.Blocked = true

@@ -180,6 +180,10 @@ func (level *Level) IsOpaque(x, y int) bool {
 	return level.Tiles[idx].TileType == WALL
 }
 
+func (level *Level) Block(x, y int, block bool) {
+	level.Tiles[level.GetIndexFromXY(x, y)].Blocked = block
+}
+
 func (level *Level) DrawLevel() {
 	gd := CurrentGame().Data
 	for x := 0; x < gd.Cols; x++ {

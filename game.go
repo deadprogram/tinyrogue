@@ -26,8 +26,8 @@ type Game struct {
 	// ActionSystem is the interface for the game to handle actions between characters.
 	ActionSystem Actionable
 
-	showMessage bool
-	message     *Message
+	MessageShowing bool
+	message        *Message
 }
 
 var currentGame *Game
@@ -68,15 +68,28 @@ func (g *Game) AddCreature(c Character) {
 	g.Creatures = append(g.Creatures, c)
 }
 
+func (g *Game) RemoveCreature(c Character) {
+	for i, creature := range g.Creatures {
+		if creature == c {
+			g.Creatures = append(g.Creatures[:i], g.Creatures[i+1:]...)
+			break
+		}
+	}
+}
+
 // Update is called on each frame loop
 // The default value is 1/60 [s]
 func (g *Game) Update() {
-	if g.showMessage {
+	if g.MessageShowing {
 		g.message.Update()
 		if !g.message.Confirmed {
 			return
 		}
-		g.showMessage = false
+		g.MessageShowing = false
+	}
+
+	if g.Turn == GameOver {
+		return
 	}
 
 	g.TurnCounter++
@@ -92,7 +105,9 @@ func (g *Game) Update() {
 				c.Update()
 			}
 		}
-		g.Turn = PlayerTurn
+		if g.Turn != GameOver {
+			g.Turn = PlayerTurn
+		}
 	}
 }
 
@@ -114,7 +129,7 @@ func (g *Game) Render() {
 		}
 	}
 
-	if g.showMessage {
+	if g.MessageShowing {
 		if g.message != nil {
 			g.message.Draw()
 		}
@@ -150,6 +165,6 @@ func (g *Game) GetIndexFromXY(x int, y int) int {
 }
 
 func (g *Game) ShowMessage(msg *Message) {
-	g.showMessage = true
+	g.MessageShowing = true
 	g.message = msg
 }

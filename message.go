@@ -4,7 +4,7 @@ import (
 	"github.com/firefly-zero/firefly-go/firefly"
 )
 
-const defaultMessageDelay = 60
+const minimumMessageDelay = 60
 
 type Message struct {
 	Font              *firefly.Font
@@ -30,7 +30,7 @@ func NewMessage(text string, font *firefly.Font, fontcolor, fillColor firefly.Co
 
 func (m *Message) Update() {
 	m.delay++
-	if m.delay > defaultMessageDelay {
+	if m.delay > minimumMessageDelay {
 		if m.NeedsConfirmation {
 			buttons := firefly.ReadButtons(firefly.Combined)
 			if buttons.N || buttons.S || buttons.E || buttons.W {

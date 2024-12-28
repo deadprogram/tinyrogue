@@ -58,7 +58,7 @@ func (p *Player) Update() {
 
 	if !tile.Blocked {
 		// player is moving away from this tile
-		level.Tiles[level.GetIndexFromXY(pos.X, pos.Y)].Blocked = false
+		level.Block(pos.X, pos.Y, false)
 		g.Player.Move(x, y)
 
 		// player has moved to this tile, so it is now blocked
