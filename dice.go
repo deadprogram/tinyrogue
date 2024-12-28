@@ -7,14 +7,12 @@ func GetRandomInt(num int) int {
 
 // GetDiceRoll returns an integer from 1 to the number
 func GetDiceRoll(num int) int {
-	switch num {
-	case 0:
-		num = 1
-	default:
-		num -= 1
+	switch {
+	case num < 2:
+		return int(getRandom() % uint32(2))
 	}
-	x := int(getRandom()) % num
-	return 1 + x
+
+	return int(getRandom()%uint32(num)) + 1
 }
 
 // Return a number between two numbers inclusive.
