@@ -19,8 +19,8 @@ func NewGameData(cols, rows, tilewidth, tileheight int) GameData {
 		TileWidth:  tilewidth,
 		TileHeight: tileheight,
 		MinSize:    4,
-		MaxSize:    8,
-		MaxRooms:   20,
+		MaxSize:    12,
+		MaxRooms:   36,
 	}
 	return g
 }

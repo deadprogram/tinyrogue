@@ -169,7 +169,7 @@ func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
 
 func (level *Level) InBounds(x, y int) bool {
 	gd := CurrentGame().Data
-	if x < 0 || x > gd.Cols-2 || y < 0 || y > gd.Rows-2 {
+	if x < 0 || x > gd.Cols-1 || y < 0 || y > gd.Rows-1 {
 		return false
 	}
 	return true
