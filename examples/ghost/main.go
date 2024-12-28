@@ -16,6 +16,9 @@ var (
 
 	titleFont firefly.Font
 	game      *tinyrogue.Game
+
+	player *Adventurer
+	ghost  *Ghost
 )
 
 func init() {
@@ -63,11 +66,11 @@ func setupGame() {
 	game.Images["wall"] = &wallImage
 
 	playerImage := firefly.LoadFile("player", nil).Image()
-	player := NewAdventurer("Sir Shaky", &playerImage, 5)
+	player = NewAdventurer("Sir Shaky", &playerImage, 5)
 	player.ViewRadius = 4
 
 	ghostImage := firefly.LoadFile("ghost", nil).Image()
-	ghost := NewGhost("Ghost", &ghostImage, 60)
+	ghost = NewGhost("Ghost", &ghostImage, 60)
 	ghost.SetBehavior(tinyrogue.CreatureApproach)
 
 	gd := tinyrogue.NewGameData(16, 10, 16, 16)
@@ -77,7 +80,7 @@ func setupGame() {
 	game.SetData(gd)
 
 	game.SetMap(tinyrogue.NewGameMap())
-	game.UseFOV = true
+	//game.UseFOV = true
 
 	game.SetPlayer(player)
 	game.AddCreature(ghost)
