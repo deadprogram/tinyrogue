@@ -12,6 +12,7 @@ type Combatant interface {
 	Health() int
 	WeaponClass() int
 	WeaponName() string
+	Damage(int) int
 }
 
 type combatant struct {
@@ -44,6 +45,11 @@ func (c *combatant) WeaponClass() int {
 
 func (c *combatant) WeaponName() string {
 	return c.weaponName
+}
+
+func (c *combatant) Damage(damage int) int {
+	c.health -= damage
+	return c.health
 }
 
 type CombatSystem struct {
@@ -81,17 +87,44 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 		// It's a hit!
 		damageRoll := tinyrogue.GetDiceRoll(attackerWeaponClass)
 
-		firefly.LogDebug(attacker.Name() + " uses " + attackerWeaponName + " on " + defender.Name() + " and hits for " + strconv.Itoa(damageRoll) + " health.")
-		msg := tinyrogue.NewMessage(attacker.Name()+" uses "+attackerWeaponName+" on "+defender.Name(),
-			&msgFont, firefly.ColorRed, firefly.ColorBlack, true)
-		msg.Text2 = "and hits for " + strconv.Itoa(damageRoll) + " damage!"
-		tinyrogue.CurrentGame().ShowMessage(msg)
-	} else {
-		firefly.LogDebug(attacker.Name() + " tries " + attackerWeaponName + " on " + defender.Name() + " and misses.")
-		msg := tinyrogue.NewMessage(attacker.Name()+" tries "+attackerWeaponName+" on "+defender.Name()+" and misses.",
-			&msgFont, firefly.ColorRed, firefly.ColorBlack, true)
-		tinyrogue.CurrentGame().ShowMessage(msg)
-	}
+		msg1 := attacker.Name() + " uses " + attackerWeaponName + " on " + defender.Name()
+		msg2 := "and hits for " + strconv.Itoa(damageRoll) + " damage!"
 
-	// TODO: Implement health reduction
+		// Apply damage
+		switch defender.Kind() {
+		case "adventurer":
+			remainingHealth := player.Damage(damageRoll)
+			if remainingHealth <= 0 {
+				// We're dead!
+				msg2 = strconv.Itoa(damageRoll) + " damage! You are dead!"
+				firefly.LogDebug("Game over!")
+				game.Turn = tinyrogue.GameOver
+			}
+		case "ghost":
+			remainingHealth := ghost.Damage(damageRoll)
+			if remainingHealth <= 0 {
+				// Ghost defeated!
+				msg2 = "Critical hit for " + strconv.Itoa(damageRoll) + " damage! Ghost defeated!"
+				firefly.LogDebug("Ghost defeated!")
+
+				// Remove ghost from the game
+				game.RemoveCreature(ghost)
+				level := game.Map.CurrentLevel
+				creaturePos := ghost.GetPosition()
+				level.Block(creaturePos.X, creaturePos.Y, false)
+
+				respawnGhost = true
+			}
+		}
+
+		firefly.LogDebug(msg1 + " " + msg2)
+		dialog := tinyrogue.NewMessage(msg1, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
+		dialog.Text2 = msg2
+		tinyrogue.CurrentGame().ShowMessage(dialog)
+	} else {
+		msg := attacker.Name() + " tries " + attackerWeaponName + " on " + defender.Name() + " and misses."
+		firefly.LogDebug(msg)
+		dialog := tinyrogue.NewMessage(msg, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
+		tinyrogue.CurrentGame().ShowMessage(dialog)
+	}
 }

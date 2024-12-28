@@ -13,14 +13,17 @@ const (
 
 var (
 	scene = gameStart
+	pause = 0
 
 	titleFont firefly.Font
 	msgFont   firefly.Font
 
 	game *tinyrogue.Game
 
-	player *Adventurer
-	ghost  *Ghost
+	player       *Adventurer
+	ghost        *Ghost
+	respawnGhost bool
+	respawnDelay int
 )
 
 func init() {
@@ -42,6 +45,23 @@ func update() {
 		updateStart()
 	case gamePlay:
 		game.Update()
+		if game.MessageShowing {
+			return
+		}
+		if game.Turn == tinyrogue.GameOver {
+			scene = gameOver
+			pause = 0
+		}
+		if respawnGhost {
+			respawnDelay++
+			if respawnDelay > 60 {
+				createGhost()
+
+				ghost.MoveTo(findSpawnLocation())
+				respawnGhost = false
+				respawnDelay = 0
+			}
+		}
 	case gameOver:
 		updateGameover()
 	}
@@ -70,10 +90,11 @@ func setupGame() {
 	playerImage := firefly.LoadFile("player", nil).Image()
 	player = NewAdventurer("Sir Shaky", &playerImage, 5)
 	player.ViewRadius = 2
+	game.SetPlayer(player)
 
 	ghostImage := firefly.LoadFile("ghost", nil).Image()
-	ghost = NewGhost("Ghost", &ghostImage, 60)
-	ghost.SetBehavior(tinyrogue.CreatureApproach)
+	game.Images["ghost"] = &ghostImage
+	createGhost()
 
 	gd := tinyrogue.NewGameData(16, 10, 16, 16)
 	gd.MinSize = 3
@@ -83,9 +104,6 @@ func setupGame() {
 
 	game.SetMap(tinyrogue.NewGameMap())
 	game.UseFOV = true
-
-	game.SetPlayer(player)
-	game.AddCreature(ghost)
 
 	game.SetActionSystem(&CombatSystem{})
 
@@ -105,4 +123,10 @@ func findSpawnLocation() tinyrogue.Position {
 			return pos
 		}
 	}
+}
+
+func createGhost() {
+	ghost = NewGhost("Ghost", game.Images["ghost"], 60)
+	ghost.SetBehavior(tinyrogue.CreatureApproach)
+	game.AddCreature(ghost)
 }

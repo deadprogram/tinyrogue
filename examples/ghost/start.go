@@ -2,15 +2,14 @@ package main
 
 import "github.com/firefly-zero/firefly-go/firefly"
 
-var startframes int
-
 // logic for the start scene
 func updateStart() {
-	startframes += 1
-	if startframes > 60 {
+	pause += 1
+	if pause > 60 {
 		buttons := firefly.ReadButtons(firefly.Combined)
 		if buttons.N || buttons.S || buttons.E || buttons.W {
 			scene = gamePlay
+			pause = 0
 		}
 	}
 }

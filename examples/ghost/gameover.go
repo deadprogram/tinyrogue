@@ -5,9 +5,10 @@ import (
 )
 
 func updateGameover() {
-	buttons := firefly.ReadButtons(firefly.Combined)
-	if buttons.N || buttons.S || buttons.E || buttons.W {
+	pause++
+	if pause > 180 {
 		scene = gameStart
+		pause = 0
 	}
 }
 
