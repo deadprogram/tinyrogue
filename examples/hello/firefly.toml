@@ -1,7 +1,7 @@
 author_id = "tinyrogue"
 app_id = "tinyrogue-hello"
 author_name = "tinyrogue"
-app_name = "Hello Demo"
+app_name = "Hello Gopher"
 
 [files]
 floor = { path = "forest.png" }
