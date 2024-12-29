@@ -26,7 +26,10 @@ type Game struct {
 	// ActionSystem is the interface for the game to handle actions between characters.
 	ActionSystem Actionable
 
+	// DialogShowing is a flag to determine if a dialog is currently showing.
 	DialogShowing bool
+
+	// currentDialog is the dialog that is currently showing.
 	currentDialog *Dialog
 }
 
@@ -48,26 +51,32 @@ func NewGame() *Game {
 	return g
 }
 
+// SetMap sets the map for the game.
 func (g *Game) SetMap(m GameMap) {
 	g.Map = m
 }
 
+// SetData sets the data for the game.
 func (g *Game) SetData(d GameData) {
 	g.Data = d
 }
 
+// SetPlayer sets the player for the game.
 func (g *Game) SetPlayer(p Character) {
 	g.Player = p
 }
 
+// SetActionSystem sets the action system for the game.
 func (g *Game) SetActionSystem(a Actionable) {
 	g.ActionSystem = a
 }
 
+// AddCreature adds a creature to the game.
 func (g *Game) AddCreature(c Character) {
 	g.Creatures = append(g.Creatures, c)
 }
 
+// RemoveCreature removes a creature from the game.
 func (g *Game) RemoveCreature(c Character) {
 	for i, creature := range g.Creatures {
 		if creature == c {
@@ -77,6 +86,7 @@ func (g *Game) RemoveCreature(c Character) {
 	}
 }
 
+// GetCreatureByName returns a creature by name.
 func (g *Game) GetCreatureByName(name string) Character {
 	for _, creature := range g.Creatures {
 		if creature.Name() == name {
@@ -125,8 +135,7 @@ func (g *Game) Render() {
 	firefly.ClearScreen(firefly.ColorBlack)
 
 	// Draw the Map
-	level := g.Map.CurrentLevel
-	level.DrawLevel()
+	g.Map.CurrentLevel.Draw()
 
 	// Draw the player
 	g.Player.Draw()
@@ -138,18 +147,15 @@ func (g *Game) Render() {
 		}
 	}
 
-	if g.DialogShowing {
-		if g.currentDialog != nil {
-			g.currentDialog.Draw()
-		}
+	if g.DialogShowing && g.currentDialog != nil {
+		g.currentDialog.Draw()
 	}
 }
 
 // Layout accepts an outside size, which is a window size on desktop,
 // and returns the game's logical screen size.
 func (g *Game) Layout(w, h int) (int, int) {
-	gd := g.Data
-	return gd.GameWidth(), gd.GameHeight()
+	return g.Data.GameWidth(), g.Data.GameHeight()
 }
 
 // CurrentGame returns the current game.
