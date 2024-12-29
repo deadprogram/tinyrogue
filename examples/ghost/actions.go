@@ -124,16 +124,14 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 		}
 
 		firefly.LogDebug(msg1 + " " + msg2)
-		dialog := tinyrogue.NewMessage(msg1, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
-		dialog.Text2 = msg2
-		tinyrogue.CurrentGame().ShowMessage(dialog)
+		dialog := tinyrogue.NewDialog(msg1, msg2, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
+		tinyrogue.CurrentGame().ShowDialog(dialog)
 	} else {
 		msg1 := attacker.Name() + " tries " + attackerWeaponName + " on " + defender.Name()
 		msg2 := "but it misses."
 		firefly.LogDebug(msg1 + " " + msg2)
 
-		dialog := tinyrogue.NewMessage(msg1, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
-		dialog.Text2 = msg2
-		tinyrogue.CurrentGame().ShowMessage(dialog)
+		dialog := tinyrogue.NewDialog(msg1, msg2, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
+		tinyrogue.CurrentGame().ShowDialog(dialog)
 	}
 }

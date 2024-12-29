@@ -52,20 +52,12 @@ func update() {
 		game.Update()
 
 		switch {
-		case game.MessageShowing:
+		case game.DialogShowing:
+			// do nothing, since we might be showing "game over" dialog
 			return
 		case respawnGhost:
-			respawnDelay++
-			if respawnDelay > 120 {
-				for i := 0; i < numberGhosts; i++ {
-					totalGhosts++
-					ghost := createGhost(totalGhosts)
-					ghost.MoveTo(findSpawnLocation())
-				}
-
-				respawnGhost = false
-				respawnDelay = 0
-			}
+			// all ghosts defeated, respawn them
+			respawnGhosts()
 		case game.Turn == tinyrogue.GameOver:
 			scene = gameOver
 			pause = 0
@@ -167,4 +159,18 @@ func removeGhost(gh *Ghost) {
 	level := game.Map.CurrentLevel
 	creaturePos := gh.GetPosition()
 	level.Block(creaturePos.X, creaturePos.Y, false)
+}
+
+func respawnGhosts() {
+	respawnDelay++
+	if respawnDelay > 120 {
+		for i := 0; i < numberGhosts; i++ {
+			totalGhosts++
+			ghost := createGhost(totalGhosts)
+			ghost.MoveTo(findSpawnLocation())
+		}
+
+		respawnGhost = false
+		respawnDelay = 0
+	}
 }
