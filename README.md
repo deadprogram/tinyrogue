@@ -20,6 +20,7 @@ Experimental package for creating roguelike games using TinyGo on [Firefly Zero]
 - Creatures approach Player using shortest path astar algorithm
 - Configurable action system for combat, spells, etc.
 - Popup messages e.g. "A wild gopher has appeared!"
+- Creature spawning
 
 ### TODO
 
@@ -27,7 +28,6 @@ Experimental package for creating roguelike games using TinyGo on [Firefly Zero]
 - Predefined maps/levels
 - Multiple levels
 - World map
-- Creature spawning
 - Level entrances/exits
 
 ## Useful tools
