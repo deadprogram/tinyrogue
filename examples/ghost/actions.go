@@ -62,47 +62,8 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 	defenderArmorClass := getDefenderArmor(defender)
 
 	// Roll a d20 to hit
-	toHitRoll := tinyrogue.GetDiceRoll(20)
-	if toHitRoll > defenderArmorClass {
-		// It's a hit!
-		damageRoll := tinyrogue.GetDiceRoll(attackerWeaponClass)
-
-		msg1 := attacker.Name() + " uses " + attackerWeaponName + " on " + defender.Name()
-		msg2 := "and hits for " + strconv.Itoa(damageRoll) + " damage!"
-
-		// Apply damage
-		switch defender.Kind() {
-		case "adventurer":
-			remainingHealth := player.Damage(damageRoll)
-			if remainingHealth <= 0 {
-				// We're dead!
-				msg2 = strconv.Itoa(damageRoll) + " damage! You are dead!"
-				game.Turn = tinyrogue.GameOver
-			}
-		case "ghost":
-			gh := defender.(*Ghost)
-			remainingHealth := gh.Damage(damageRoll)
-			if remainingHealth <= 0 {
-				// Ghost defeated!
-				msg2 = "Critical hit for " + strconv.Itoa(damageRoll) + " damage! " + gh.Name() + " defeated!"
-
-				// Remove ghost from the game
-				removeGhost(gh)
-				score++
-
-				// if all ghosts are defeated, respawn a new batch
-				if len(game.Creatures) == 0 {
-					respawnGhost = true
-					numberGhosts++
-				}
-			}
-		}
-
-		firefly.LogDebug(msg1 + " " + msg2)
-
-		dialog := tinyrogue.NewDialog(msg1, msg2, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
-		tinyrogue.CurrentGame().ShowDialog(dialog)
-	} else {
+	if defenderArmorClass > tinyrogue.GetDiceRoll(20) {
+		// It's a miss!
 		msg1 := attacker.Name() + " tries " + attackerWeaponName + " on " + defender.Name()
 		msg2 := "but it misses."
 
@@ -110,7 +71,48 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 
 		dialog := tinyrogue.NewDialog(msg1, msg2, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
 		tinyrogue.CurrentGame().ShowDialog(dialog)
+
+		return
 	}
+
+	// It's a hit!
+	damageRoll := tinyrogue.GetDiceRoll(attackerWeaponClass)
+
+	msg1 := attacker.Name() + " uses " + attackerWeaponName + " on " + defender.Name()
+	msg2 := "and hits for " + strconv.Itoa(damageRoll) + " damage!"
+
+	// Apply damage
+	switch defender.Kind() {
+	case "adventurer":
+		remainingHealth := player.Damage(damageRoll)
+		if remainingHealth <= 0 {
+			// We're dead!
+			msg2 = strconv.Itoa(damageRoll) + " damage! You are dead!"
+			game.Turn = tinyrogue.GameOver
+		}
+	case "ghost":
+		gh := defender.(*Ghost)
+		remainingHealth := gh.Damage(damageRoll)
+		if remainingHealth <= 0 {
+			// Ghost defeated!
+			msg2 = "Critical hit for " + strconv.Itoa(damageRoll) + " damage! " + gh.Name() + " defeated!"
+
+			// Remove ghost from the game
+			removeGhost(gh)
+			score++
+
+			// if all ghosts are defeated, respawn a new batch
+			if len(game.Creatures) == 0 {
+				respawnGhost = true
+				numberGhosts++
+			}
+		}
+	}
+
+	firefly.LogDebug(msg1 + " " + msg2)
+
+	dialog := tinyrogue.NewDialog(msg1, msg2, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
+	tinyrogue.CurrentGame().ShowDialog(dialog)
 }
 
 func getAttackerWeapon(c tinyrogue.Character) (weaponClass int, weaponName string) {
