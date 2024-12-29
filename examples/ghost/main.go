@@ -24,10 +24,19 @@ var (
 
 	player *Adventurer
 
-	score        int
+	// game score, how many ghosts defeated
+	score int
+
+	// flag to respawn ghosts
 	respawnGhost bool
+
+	// number of ghosts to respawn, increases with each level
 	numberGhosts int
-	totalGhosts  int
+
+	// total number of ghosts in the game, used for naming
+	totalGhosts int
+
+	// delay before respawning ghosts
 	respawnDelay int
 )
 
@@ -95,10 +104,13 @@ func setupGame() {
 }
 
 func startGame() {
+	score = 0
+	numberGhosts = 1
+	totalGhosts = 1
+
 	game.SetMap(tinyrogue.NewGameMap())
 
 	createPlayer()
-	totalGhosts++
 	ghost := createGhost(totalGhosts)
 
 	// set player initial position

@@ -16,8 +16,6 @@ func updateStart() {
 
 			game.Turn = tinyrogue.PlayerTurn
 			game.TurnCounter = 0
-
-			score = 0
 		}
 	}
 }
