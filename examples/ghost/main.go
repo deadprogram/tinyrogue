@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/deadprogram/tinyrogue"
 	"github.com/firefly-zero/firefly-go/firefly"
 )
@@ -22,7 +24,10 @@ var (
 
 	player *Adventurer
 
+	score        int
 	respawnGhost bool
+	numberGhosts int
+	totalGhosts  int
 	respawnDelay int
 )
 
@@ -45,22 +50,25 @@ func update() {
 		updateStart()
 	case gamePlay:
 		game.Update()
-		if game.MessageShowing {
-			return
-		}
-		if game.Turn == tinyrogue.GameOver {
-			scene = gameOver
-			pause = 0
-		}
-		if respawnGhost {
-			respawnDelay++
-			if respawnDelay > 60 {
-				ghost := createGhost()
 
-				ghost.MoveTo(findSpawnLocation())
+		switch {
+		case game.MessageShowing:
+			return
+		case respawnGhost:
+			respawnDelay++
+			if respawnDelay > 120 {
+				for i := 0; i < numberGhosts; i++ {
+					totalGhosts++
+					ghost := createGhost(totalGhosts)
+					ghost.MoveTo(findSpawnLocation())
+				}
+
 				respawnGhost = false
 				respawnDelay = 0
 			}
+		case game.Turn == tinyrogue.GameOver:
+			scene = gameOver
+			pause = 0
 		}
 	case gameOver:
 		updateGameover()
@@ -98,7 +106,8 @@ func startGame() {
 	game.SetMap(tinyrogue.NewGameMap())
 
 	createPlayer()
-	ghost := createGhost()
+	totalGhosts++
+	ghost := createGhost(totalGhosts)
 
 	// set player initial position
 	player.MoveTo(findSpawnLocation())
@@ -137,8 +146,8 @@ func createPlayer() {
 	game.SetPlayer(player)
 }
 
-func createGhost() *Ghost {
-	ghost := NewGhost("Ghost", game.Images["ghost"], 60)
+func createGhost(num int) *Ghost {
+	ghost := NewGhost("Ghost-"+strconv.Itoa(num), game.Images["ghost"], 60)
 	ghost.SetBehavior(tinyrogue.CreatureApproach)
 	game.AddCreature(ghost)
 
