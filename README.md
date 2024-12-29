@@ -19,9 +19,9 @@ Fun package for creating roguelike games using TinyGo on [Firefly Zero](https://
 - Creature behavior is configurable
 - Creatures approach Player using shortest path astar algorithm
 - Configurable action system for combat, spells, etc.
-- Popup messages e.g. "A wild gopher has appeared!"
+- Popup dialogs for messages e.g. "A wild gopher has appeared!"
 - Creature spawning
-- Allow for terrain display variation for walls and floors
+- Automatic terrain image variation for walls and floors
 
 ### TODO
 
