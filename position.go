@@ -1,6 +1,6 @@
 package tinyrogue
 
-import "math"
+import "github.com/orsinium-labs/tinymath"
 
 type Position struct {
 	X int
@@ -8,8 +8,8 @@ type Position struct {
 }
 
 func (p *Position) GetManhattanDistance(other *Position) int {
-	xDist := math.Abs(float64(p.X - other.X))
-	yDist := math.Abs(float64(p.Y - other.Y))
+	xDist := tinymath.Abs(float32(p.X - other.X))
+	yDist := tinymath.Abs(float32(p.Y - other.Y))
 	return int(xDist) + int(yDist)
 }
 
