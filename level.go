@@ -128,7 +128,7 @@ func (level *Level) GenerateLevelTiles() {
 
 				coinflip := GetDiceRoll(2)
 
-				if coinflip == 1 {
+				if coinflip == 2 {
 					level.createHorizontalTunnel(prevX, newX, prevY)
 					level.createVerticalTunnel(prevY, newY, newX)
 				} else {
