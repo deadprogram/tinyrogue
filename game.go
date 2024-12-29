@@ -26,8 +26,8 @@ type Game struct {
 	// ActionSystem is the interface for the game to handle actions between characters.
 	ActionSystem Actionable
 
-	MessageShowing bool
-	message        *Message
+	DialogShowing bool
+	currentDialog *Dialog
 }
 
 var currentGame *Game
@@ -89,12 +89,12 @@ func (g *Game) GetCreatureByName(name string) Character {
 // Update is called on each frame loop
 // The default value is 1/60 [s]
 func (g *Game) Update() {
-	if g.MessageShowing {
-		g.message.Update()
-		if !g.message.Confirmed {
+	if g.DialogShowing {
+		g.currentDialog.Update()
+		if !g.currentDialog.Confirmed {
 			return
 		}
-		g.MessageShowing = false
+		g.DialogShowing = false
 	}
 
 	if g.Turn == GameOver {
@@ -138,9 +138,9 @@ func (g *Game) Render() {
 		}
 	}
 
-	if g.MessageShowing {
-		if g.message != nil {
-			g.message.Draw()
+	if g.DialogShowing {
+		if g.currentDialog != nil {
+			g.currentDialog.Draw()
 		}
 	}
 }
@@ -173,7 +173,8 @@ func (g *Game) GetIndexFromXY(x int, y int) int {
 	return (y * g.Data.Cols) + x
 }
 
-func (g *Game) ShowMessage(msg *Message) {
-	g.MessageShowing = true
-	g.message = msg
+// ShowDialog shows a dialog on the screen.
+func (g *Game) ShowDialog(dlg *Dialog) {
+	g.DialogShowing = true
+	g.currentDialog = dlg
 }
