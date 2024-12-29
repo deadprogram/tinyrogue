@@ -58,31 +58,8 @@ type CombatSystem struct {
 func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.Character) {
 	firefly.LogDebug(attacker.Name() + " is attacking " + defender.Name())
 
-	var attackerWeaponClass, defenderArmorClass int
-	var attackerWeaponName string
-
-	switch attacker.Kind() {
-	case "adventurer":
-		attackerWeaponClass = player.WeaponClass()
-		attackerWeaponName = player.WeaponName()
-	case "ghost":
-		c := tinyrogue.CurrentGame().GetCreatureByName(attacker.Name())
-		gh := c.(*Ghost)
-		attackerWeaponClass = gh.WeaponClass()
-		attackerWeaponName = gh.WeaponName()
-	default:
-		firefly.LogDebug("Unknown attacker kind: " + attacker.Kind())
-	}
-
-	switch defender.Kind() {
-	case "adventurer":
-		defenderArmorClass = player.ArmorClass()
-	case "ghost":
-		gh := defender.(*Ghost)
-		defenderArmorClass = gh.ArmorClass()
-	default:
-		firefly.LogDebug("Unknown defender kind: " + defender.Kind())
-	}
+	attackerWeaponClass, attackerWeaponName := getAttackerWeapon(attacker)
+	defenderArmorClass := getDefenderArmor(defender)
 
 	// Roll a d20 to hit
 	toHitRoll := tinyrogue.GetDiceRoll(20)
@@ -100,7 +77,6 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 			if remainingHealth <= 0 {
 				// We're dead!
 				msg2 = strconv.Itoa(damageRoll) + " damage! You are dead!"
-				firefly.LogDebug("Game over!")
 				game.Turn = tinyrogue.GameOver
 			}
 		case "ghost":
@@ -109,7 +85,6 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 			if remainingHealth <= 0 {
 				// Ghost defeated!
 				msg2 = "Critical hit for " + strconv.Itoa(damageRoll) + " damage! " + gh.Name() + " defeated!"
-				firefly.LogDebug(msg2)
 
 				// Remove ghost from the game
 				removeGhost(gh)
@@ -124,14 +99,45 @@ func (ca *CombatSystem) Action(attacker tinyrogue.Character, defender tinyrogue.
 		}
 
 		firefly.LogDebug(msg1 + " " + msg2)
+
 		dialog := tinyrogue.NewDialog(msg1, msg2, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
 		tinyrogue.CurrentGame().ShowDialog(dialog)
 	} else {
 		msg1 := attacker.Name() + " tries " + attackerWeaponName + " on " + defender.Name()
 		msg2 := "but it misses."
+
 		firefly.LogDebug(msg1 + " " + msg2)
 
 		dialog := tinyrogue.NewDialog(msg1, msg2, &msgFont, firefly.ColorRed, firefly.ColorBlack, true)
 		tinyrogue.CurrentGame().ShowDialog(dialog)
 	}
+}
+
+func getAttackerWeapon(c tinyrogue.Character) (weaponClass int, weaponName string) {
+	switch c.Kind() {
+	case "adventurer":
+		weaponClass = player.WeaponClass()
+		weaponName = player.WeaponName()
+	case "ghost":
+		cr := tinyrogue.CurrentGame().GetCreatureByName(c.Name())
+		gh := cr.(*Ghost)
+		weaponClass = gh.WeaponClass()
+		weaponName = gh.WeaponName()
+	default:
+		firefly.LogDebug("Unknown attacker kind: " + c.Kind())
+	}
+	return
+}
+
+func getDefenderArmor(c tinyrogue.Character) (armorClass int) {
+	switch c.Kind() {
+	case "adventurer":
+		armorClass = player.ArmorClass()
+	case "ghost":
+		gh := c.(*Ghost)
+		armorClass = gh.ArmorClass()
+	default:
+		firefly.LogDebug("Unknown defender kind: " + c.Kind())
+	}
+	return
 }
