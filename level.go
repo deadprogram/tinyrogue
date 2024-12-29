@@ -19,8 +19,8 @@ const (
 type MapTile struct {
 	PixelX   int // Upper left corner of the tile
 	PixelY   int
-	Blocked  bool           // The tile should block the player or monster ?
-	Image    *firefly.Image // Pointer to an Image
+	Blocked  bool          // tile should block the player or creatures?
+	Image    firefly.Image // image for this tile
 	Visible  bool
 	Explored bool
 	TileType TileType
@@ -92,7 +92,7 @@ func (level *Level) createRoom(room Rect) {
 }
 
 // getWallImage returns a random wall image from the list of wall images.
-func (level *Level) getWallImage() *firefly.Image {
+func (level *Level) getWallImage() firefly.Image {
 	walls := strings.Split(CurrentGame().Data.WallTypes, ",")
 	if len(walls) < 2 {
 		return CurrentGame().Images[walls[0]]
@@ -102,7 +102,7 @@ func (level *Level) getWallImage() *firefly.Image {
 }
 
 // getFloorImage returns a random floor image from the list of floor images.
-func (level *Level) getFloorImage() *firefly.Image {
+func (level *Level) getFloorImage() firefly.Image {
 	floors := strings.Split(CurrentGame().Data.FloorTypes, ",")
 	if len(floors) < 2 {
 		return CurrentGame().Images[floors[0]]
@@ -210,7 +210,7 @@ func (level *Level) Draw() {
 			idx := level.GetIndexFromXY(x, y)
 			tile := level.Tiles[idx]
 			if tile.Visible || tile.Explored || !CurrentGame().UseFOV {
-				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
+				firefly.DrawImage(tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
 			}
 		}
 	}

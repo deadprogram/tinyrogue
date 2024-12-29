@@ -8,8 +8,8 @@ import (
 
 func TestAStar(t *testing.T) {
 	game := NewGame()
-	game.Images["floor"] = &firefly.Image{}
-	game.Images["wall"] = &firefly.Image{}
+	game.Images["floor"] = firefly.Image{}
+	game.Images["wall"] = firefly.Image{}
 
 	game.SetData(NewGameData(16, 10, 16, 16))
 	game.SetMap(NewGameMap())
@@ -39,8 +39,8 @@ func TestAStar(t *testing.T) {
 
 func TestAStar2(t *testing.T) {
 	game := NewGame()
-	game.Images["floor"] = &firefly.Image{}
-	game.Images["wall"] = &firefly.Image{}
+	game.Images["floor"] = firefly.Image{}
+	game.Images["wall"] = firefly.Image{}
 
 	game.SetData(NewGameData(32, 32, 16, 16))
 	game.SetMap(NewGameMap())

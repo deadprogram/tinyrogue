@@ -16,23 +16,25 @@ var game *tinyrogue.Game
 func boot() {
 	game = tinyrogue.NewGame()
 
-	floorImage := firefly.LoadFile("floor", nil).Image()
-	game.Images["floor"] = &floorImage
+	game.LoadImage("forest")
+	game.LoadImage("forest2")
+	game.LoadImage("tree")
+	game.LoadImage("tree2")
 
-	wallImage := firefly.LoadFile("wall", nil).Image()
-	game.Images["wall"] = &wallImage
+	gd := tinyrogue.NewGameData(16, 10, 16, 16)
+	gd.FloorTypes = "forest,forest2"
+	gd.WallTypes = "tree,tree2"
+
+	game.SetData(gd)
+	game.SetMap(tinyrogue.NewGameMap())
 
 	playerImage := firefly.LoadFile("player", nil).Image()
-	player := tinyrogue.NewPlayer("Player", "player", &playerImage, 5)
-
-	game.SetData(tinyrogue.NewGameData(16, 10, 16, 16))
-	game.SetMap(tinyrogue.NewGameMap())
+	player := tinyrogue.NewPlayer("Player", "player", playerImage, 5)
 
 	game.SetPlayer(player)
 
 	// set player initial position
-	entrance := tinyrogue.Position{X: 2, Y: 2}
-	player.MoveTo(entrance)
+	player.MoveTo(findOpenLocation())
 }
 
 func update() {
@@ -41,4 +43,14 @@ func update() {
 
 func render() {
 	game.Render()
+}
+
+func findOpenLocation() tinyrogue.Position {
+	l := game.Map.CurrentLevel
+	for {
+		pos, free := l.RandomLocation()
+		if free {
+			return pos
+		}
+	}
 }

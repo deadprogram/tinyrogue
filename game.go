@@ -18,7 +18,7 @@ type Game struct {
 	Creatures []Character
 
 	// Images that are cached for space efficiency. Used for tiles and creatures.
-	Images map[string]*firefly.Image
+	Images map[string]firefly.Image
 
 	// UseFOV is a flag to determine if the game should use Field of View.
 	UseFOV bool
@@ -38,7 +38,7 @@ var currentGame *Game
 // NewGame creates a new Game Object and initializes the data
 func NewGame() *Game {
 	g := &Game{
-		Images:    make(map[string]*firefly.Image),
+		Images:    make(map[string]firefly.Image),
 		Creatures: make([]Character, 0),
 	}
 	g.Debug = true
@@ -183,4 +183,11 @@ func (g *Game) GetIndexFromXY(x int, y int) int {
 func (g *Game) ShowDialog(dlg *Dialog) {
 	g.DialogShowing = true
 	g.currentDialog = dlg
+}
+
+func (g *Game) LoadImage(name string) *firefly.Image {
+	img := firefly.LoadFile(name, nil).Image()
+	g.Images[name] = img
+
+	return &img
 }

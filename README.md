@@ -2,7 +2,7 @@
 
 <img src="./images/hello.png" alt="hello example screenshot" width="480"/>
 
-Experimental package for creating roguelike games using TinyGo on [Firefly Zero](https://fireflyzero.com/).
+Fun package for creating roguelike games using TinyGo on [Firefly Zero](https://fireflyzero.com/).
 
 ## Features
 
@@ -21,6 +21,7 @@ Experimental package for creating roguelike games using TinyGo on [Firefly Zero]
 - Configurable action system for combat, spells, etc.
 - Popup messages e.g. "A wild gopher has appeared!"
 - Creature spawning
+- Allow for terrain display variation for walls and floors
 
 ### TODO
 
@@ -29,6 +30,7 @@ Experimental package for creating roguelike games using TinyGo on [Firefly Zero]
 - Multiple levels
 - World map
 - Level entrances/exits
+- ?
 
 ## Useful tools
 
