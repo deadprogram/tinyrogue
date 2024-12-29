@@ -16,6 +16,8 @@ type Dialog struct {
 	NeedsConfirmation bool
 	Confirmed         bool
 	delay             int
+	Point             firefly.Point
+	Size              firefly.Size
 }
 
 // NewDialog creates a new dialog box with the given text and font.
@@ -28,6 +30,8 @@ func NewDialog(text1 string, text2 string, font *firefly.Font, fontcolor, fillCo
 		Confirmed:         false,
 		FontColor:         fontcolor,
 		FillColor:         fillColor,
+		Point:             firefly.Point{X: 0, Y: 20},
+		Size:              firefly.Size{W: 260, H: 60},
 	}
 }
 
@@ -44,21 +48,28 @@ func (d *Dialog) Update() {
 	}
 }
 
+const (
+	xMargin     = 10
+	yMargin     = 20
+	lineSpacing = 10
+)
+
 // Draw draws the dialog box to the screen.
 func (d *Dialog) Draw() {
-	pt := firefly.Point{X: 0, Y: 20}
-	sz := firefly.Size{W: 260, H: 60}
-	firefly.DrawRect(pt, sz, firefly.Style{FillColor: d.FillColor})
+	firefly.DrawRect(d.Point, d.Size, firefly.Style{FillColor: d.FillColor})
 
-	firefly.DrawText(d.Text1, *d.Font, firefly.Point{X: 10, Y: 40}, d.FontColor)
+	x := d.Point.X + xMargin
+	y := d.Point.Y + yMargin
 
-	y := 50
+	firefly.DrawText(d.Text1, *d.Font, firefly.Point{X: x, Y: y}, d.FontColor)
+
+	y += lineSpacing
 	if d.Text2 != "" {
-		firefly.DrawText(d.Text2, *d.Font, firefly.Point{X: 10, Y: y}, d.FontColor)
-		y = 60
+		firefly.DrawText(d.Text2, *d.Font, firefly.Point{X: x, Y: y}, d.FontColor)
+		y += lineSpacing
 	}
 
 	if d.NeedsConfirmation {
-		firefly.DrawText("Press any button to continue...", *d.Font, firefly.Point{X: 10, Y: y}, d.FontColor)
+		firefly.DrawText("Press any button to continue...", *d.Font, firefly.Point{X: x, Y: y}, d.FontColor)
 	}
 }
