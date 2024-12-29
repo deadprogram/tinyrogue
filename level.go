@@ -1,10 +1,11 @@
 package tinyrogue
 
 import (
-	"math"
 	"strconv"
+	"strings"
 
 	"github.com/firefly-zero/firefly-go/firefly"
+	"github.com/orsinium-labs/tinymath"
 )
 
 type TileType int
@@ -56,11 +57,6 @@ func (level *Level) GetIndexFromXY(x int, y int) int {
 // createTiles creates a map of all walls as a baseline for carving out a level.
 func (level *Level) createTiles() []*MapTile {
 	gd := CurrentGame().Data
-	wallImg, ok := CurrentGame().Images["wall"]
-	if !ok {
-		logError("Could not find wall image")
-	}
-
 	tiles := make([]*MapTile, gd.Rows*gd.Cols)
 	index := 0
 	for x := 0; x < gd.Cols; x++ {
@@ -70,7 +66,7 @@ func (level *Level) createTiles() []*MapTile {
 				PixelX:   x * gd.TileWidth,
 				PixelY:   y * gd.TileHeight,
 				Blocked:  true,
-				Image:    wallImg,
+				Image:    level.getWallImage(),
 				TileType: WALL,
 			}
 			tiles[index] = &tile
@@ -81,22 +77,39 @@ func (level *Level) createTiles() []*MapTile {
 	return tiles
 }
 
+// createRoom creates a room in the level.
 func (level *Level) createRoom(room Rect) {
-	floorImg, ok := CurrentGame().Images["floor"]
-	if !ok {
-		logError("Could not find floor image")
-	}
-
 	for y := room.Y1 + 1; y < room.Y2; y++ {
 		for x := room.X1 + 1; x < room.X2; x++ {
 			index := level.GetIndexFromXY(x, y)
 			if index > 0 && index < len(level.Tiles) {
 				level.Tiles[index].Blocked = false
 				level.Tiles[index].TileType = FLOOR
-				level.Tiles[index].Image = floorImg
+				level.Tiles[index].Image = level.getFloorImage()
 			}
 		}
 	}
+}
+
+// getWallImage returns a random wall image from the list of wall images.
+func (level *Level) getWallImage() *firefly.Image {
+	walls := strings.Split(CurrentGame().Data.WallTypes, ",")
+	if len(walls) < 2 {
+		return CurrentGame().Images[walls[0]]
+	}
+	wall := walls[GetDiceRoll(len(walls))-1]
+	return CurrentGame().Images[wall]
+}
+
+// getFloorImage returns a random floor image from the list of floor images.
+func (level *Level) getFloorImage() *firefly.Image {
+	floors := strings.Split(CurrentGame().Data.FloorTypes, ",")
+	if len(floors) < 2 {
+		return CurrentGame().Images[floors[0]]
+	}
+
+	floor := floors[GetDiceRoll(len(floors))-1]
+	return CurrentGame().Images[floor]
 }
 
 // GenerateLevelTiles creates a new Dungeon Level Map.
@@ -143,30 +156,33 @@ func (level *Level) GenerateLevelTiles() {
 	logDebug("Total rooms created: " + strconv.Itoa(len(level.Rooms)))
 }
 
+// createHorizontalTunnel creates a horizontal tunnel between two points.
 func (level *Level) createHorizontalTunnel(x1 int, x2 int, y int) {
 	gd := CurrentGame().Data
-	for x := math.Min(float64(x1), float64(x2)); x < math.Max(float64(x1), float64(x2))+1; x++ {
+	for x := tinymath.Min(float32(x1), float32(x2)); x < tinymath.Max(float32(x1), float32(x2))+1; x++ {
 		index := level.GetIndexFromXY(int(x), y)
 		if index > 0 && index < gd.Rows*gd.Cols {
 			level.Tiles[index].Blocked = false
 			level.Tiles[index].TileType = FLOOR
-			level.Tiles[index].Image = CurrentGame().Images["floor"]
+			level.Tiles[index].Image = level.getFloorImage()
 		}
 	}
 }
 
+// createVerticalTunnel creates a vertical tunnel between two points.
 func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
 	gd := CurrentGame().Data
-	for y := math.Min(float64(y1), float64(y2)); y < math.Max(float64(y1), float64(y2))+1; y++ {
+	for y := tinymath.Min(float32(y1), float32(y2)); y < tinymath.Max(float32(y1), float32(y2))+1; y++ {
 		index := level.GetIndexFromXY(x, int(y))
 		if index > 0 && index < gd.Rows*gd.Cols {
 			level.Tiles[index].TileType = FLOOR
 			level.Tiles[index].Blocked = false
-			level.Tiles[index].Image = CurrentGame().Images["floor"]
+			level.Tiles[index].Image = level.getFloorImage()
 		}
 	}
 }
 
+// InBounds checks if the given x and y coordinates are within the level bounds.
 func (level *Level) InBounds(x, y int) bool {
 	gd := CurrentGame().Data
 	if x < 0 || x > gd.Cols-1 || y < 0 || y > gd.Rows-1 {
@@ -175,16 +191,19 @@ func (level *Level) InBounds(x, y int) bool {
 	return true
 }
 
+// IsOpaque checks if the given x and y coordinates are within the level bounds.
 func (level *Level) IsOpaque(x, y int) bool {
 	idx := level.GetIndexFromXY(x, y)
 	return level.Tiles[idx].TileType == WALL
 }
 
+// Block sets the blocked property of a tile at the given x and y coordinates.
 func (level *Level) Block(x, y int, block bool) {
 	level.Tiles[level.GetIndexFromXY(x, y)].Blocked = block
 }
 
-func (level *Level) DrawLevel() {
+// Draw the level.
+func (level *Level) Draw() {
 	gd := CurrentGame().Data
 	for x := 0; x < gd.Cols; x++ {
 		for y := 0; y < gd.Rows; y++ {
@@ -197,14 +216,17 @@ func (level *Level) DrawLevel() {
 	}
 }
 
+// RayCast casts out rays each degree in a 360 circle from the player, to help determine what the player can see.
 func (level *Level) RayCast(playerX, playerY int) {
 	level.playerFoV.RayCast(playerX, playerY, level)
 }
 
+// SetViewRadius sets the view radius for the player.
 func (level *Level) SetViewRadius(radius int) {
 	level.playerFoV.SetTorchRadius(radius)
 }
 
+// RandomLocation returns a random location in the level.
 func (level *Level) RandomLocation() (Position, bool) {
 	if len(level.Rooms) == 0 {
 		return Position{}, false
@@ -218,6 +240,7 @@ func (level *Level) RandomLocation() (Position, bool) {
 	return Position{x, y}, !tile.Blocked
 }
 
+// Dump prints the level to the console.
 func (level *Level) Dump() {
 	gd := CurrentGame().Data
 	hdr := "  "
