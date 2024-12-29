@@ -2,7 +2,7 @@
 
 <img src="./images/hello.png" alt="hello example screenshot" width="480"/>
 
-Fun package for creating roguelike games using TinyGo on [Firefly Zero](https://fireflyzero.com/).
+Fun package for creating [roguelike games](https://en.wikipedia.org/wiki/Roguelike) using TinyGo on [Firefly Zero](https://fireflyzero.com/).
 
 ## Features
 
@@ -31,6 +31,16 @@ Fun package for creating roguelike games using TinyGo on [Firefly Zero](https://
 - World map
 - Level entrances/exits
 - ?
+
+## Examples
+
+Here is a simple "Hello, Gopher" example that shows a little bit of what you can do:
+
+[Hello, Gopher](./examples/hello/)
+
+A more complete example is the "Ghost Castle" game located here:
+
+https://github.com/deadprogram/ghost-castle
 
 ## Useful tools
 
