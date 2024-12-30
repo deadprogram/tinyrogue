@@ -57,21 +57,21 @@ func init() {
 var game *tinyrogue.Game
 
 func boot() {
-    // create a new game
-    game = tinyrogue.NewGame()
+	// create a new game
+	game = tinyrogue.NewGame()
 
-    // load the image tiles for the floor and walls
+	// load the image tiles for the floor and walls
 	game.LoadImage("floor")
 	game.LoadImage("wall")
 
-    // set the dimensions for the game and the tiles
+	// set the dimensions for the game and the tiles
 	gd := tinyrogue.NewGameData(16, 10, 16, 16)
 	game.SetData(gd)
 
-    // generate a random game map
+	// generate a random game map
 	game.SetMap(tinyrogue.NewGameMap())
 
-    // create the player
+	// create the player
 	player := tinyrogue.NewPlayer("Player", "player", game.LoadImage("player"), 5)
 	game.SetPlayer(player)
 
