@@ -14,12 +14,15 @@ type FieldOfVision struct {
 	torchRadius int
 }
 
+// viewIncrement is the number of degrees to increment the FOV by
+const viewIncrement = 30
+
 // InitializeFOV generates the cos and sin tables, for 360 degrees, for use when raycasting to determine line of sight
 func (f *FieldOfVision) InitializeFOV() {
 	f.cosTable = make(map[int]float32)
 	f.sinTable = make(map[int]float32)
 
-	for i := 0; i < 360; i++ {
+	for i := 0; i < 360; i += viewIncrement {
 		ax := tinymath.Sin(float32(i) / (float32(180) / tinymath.Pi))
 		ay := tinymath.Cos(float32(i) / (float32(180) / tinymath.Pi))
 
@@ -48,7 +51,7 @@ func (f *FieldOfVision) SetAllInvisible(m *Level) {
 // (blocks sight), stop, as the player will not be able to see past that. Every visible tile will get the Visible
 // and Explored properties set to true.
 func (f *FieldOfVision) RayCast(playerX, playerY int, m *Level) {
-	for i := 0; i < 360; i++ {
+	for i := 0; i < 360; i += viewIncrement {
 
 		ax := f.sinTable[i]
 		ay := f.cosTable[i]
