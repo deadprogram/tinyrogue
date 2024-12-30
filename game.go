@@ -185,9 +185,9 @@ func (g *Game) ShowDialog(dlg *Dialog) {
 	g.currentDialog = dlg
 }
 
-func (g *Game) LoadImage(name string) *firefly.Image {
+func (g *Game) LoadImage(name string) firefly.Image {
 	img := firefly.LoadFile(name, nil).Image()
 	g.Images[name] = img
 
-	return &img
+	return img
 }
