@@ -6,4 +6,4 @@
 
 ## Credits
 
-Uses graphics from https://opengameart.org/content/forest-tiles
+Uses graphics from https://kenney.nl/assets/tiny-dungeon
