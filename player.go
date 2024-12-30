@@ -29,15 +29,15 @@ func (p *Player) Update() {
 	g := CurrentGame()
 	x, y := 0, 0
 
-	buttons := firefly.ReadButtons(firefly.Combined)
+	pad, _ := firefly.ReadPad(firefly.Combined)
 	switch {
-	case buttons.N:
+	case pad.DPad().Down:
 		y = -1
-	case buttons.S:
+	case pad.DPad().Up:
 		y = 1
-	case buttons.E:
+	case pad.DPad().Right:
 		x = 1
-	case buttons.W:
+	case pad.DPad().Left:
 		x = -1
 	}
 
