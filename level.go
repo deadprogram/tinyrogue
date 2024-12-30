@@ -32,7 +32,6 @@ type Level struct {
 	Rooms      []Rect
 	FloorTypes string
 	WallTypes  string
-	playerFoV  *FieldOfVision
 	ViewRadius int
 }
 
@@ -43,10 +42,6 @@ func NewLevel(floors, walls string) Level {
 		FloorTypes: floors,
 		WallTypes:  walls,
 	}
-
-	// TODO: move this to player?
-	l.playerFoV = &FieldOfVision{}
-	l.playerFoV.InitializeFOV()
 
 	return l
 }
@@ -219,16 +214,6 @@ func (level *Level) Draw() {
 			}
 		}
 	}
-}
-
-// RayCast casts out rays each degree in a 360 circle from the player, to help determine what the player can see.
-func (level *Level) RayCast(playerX, playerY int) {
-	level.playerFoV.RayCast(playerX, playerY, level)
-}
-
-// SetViewRadius sets the view radius for the player.
-func (level *Level) SetViewRadius(radius int) {
-	level.playerFoV.SetTorchRadius(radius)
 }
 
 // RandomLocation returns a random location in the level.

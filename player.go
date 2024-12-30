@@ -5,11 +5,15 @@ import "github.com/firefly-zero/firefly-go/firefly"
 // Player represents the player character in the game.
 type Player struct {
 	*character
+	fov        *FieldOfVision
 	ViewRadius int
 }
 
 // NewPlayer creates a new Player and initializes the data.
 func NewPlayer(name string, kind string, img firefly.Image, speed int) *Player {
+	fov := &FieldOfVision{}
+	fov.InitializeFOV()
+
 	return &Player{
 		character: &character{
 			name:  name,
@@ -17,6 +21,7 @@ func NewPlayer(name string, kind string, img firefly.Image, speed int) *Player {
 			Image: img,
 			speed: speed,
 		},
+		fov: fov,
 	}
 }
 
@@ -50,8 +55,8 @@ func (p *Player) Update() {
 	level := g.Map.CurrentLevel
 
 	if g.UseFOV {
-		level.SetViewRadius(p.ViewRadius)
-		level.RayCast(pos.X, pos.Y)
+		p.fov.SetTorchRadius(p.ViewRadius)
+		p.fov.RayCast(pos.X, pos.Y, level)
 	}
 
 	if !level.InBounds(pos.X+x, pos.Y+y) {
