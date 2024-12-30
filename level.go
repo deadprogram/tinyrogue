@@ -240,6 +240,25 @@ func (level *Level) RandomLocation() (Position, bool) {
 	return Position{x, y}, !tile.Blocked
 }
 
+// OpenLocation returns an open location in the level. Used for "spawning".
+func (level *Level) OpenLocation() Position {
+	for {
+		pos, free := level.RandomLocation()
+		if free {
+			return pos
+		}
+	}
+}
+
+func (level *Level) GetRoom(x, y int) int {
+	for i, r := range level.Rooms {
+		if r.Contains(x, y) {
+			return i
+		}
+	}
+	return -1
+}
+
 // Dump prints the level to the console.
 func (level *Level) Dump() {
 	gd := CurrentGame().Data
@@ -257,9 +276,18 @@ func (level *Level) Dump() {
 			if tile.TileType == WALL {
 				data += "#"
 			} else {
-				data += "."
+				rm := level.GetRoom(x, y)
+				if rm == -1 {
+					data += "."
+				} else {
+					data += strconv.Itoa(rm % 10)
+				}
 			}
 		}
 		logDebug(data)
+	}
+
+	for i, r := range level.Rooms {
+		logDebug("Room: " + strconv.Itoa(i) + ": " + strconv.Itoa(r.X1) + "," + strconv.Itoa(r.Y1) + " " + strconv.Itoa(r.X2) + "," + strconv.Itoa(r.Y2))
 	}
 }

@@ -163,6 +163,11 @@ func CurrentGame() *Game {
 	return currentGame
 }
 
+// CurrentLevel returns the current level for game.
+func (g *Game) CurrentLevel() *Level {
+	return &g.Map.CurrentLevel
+}
+
 // GetCreatureForTile returns the creature for the given tile index.
 func (g *Game) GetCreatureForTile(index int) Character {
 	for _, c := range g.Creatures {

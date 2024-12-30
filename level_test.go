@@ -16,4 +16,9 @@ func TestLevel(t *testing.T) {
 	if len(level.Tiles) != 160 {
 		t.Errorf("incorrect number of tiles for level, wanted 160, got %d", len(level.Tiles))
 	}
+
+	pos := level.OpenLocation()
+	if pos.X < 0 || pos.X >= 16 || pos.Y < 0 || pos.Y >= 10 {
+		t.Errorf("invalid open location %v", pos)
+	}
 }
