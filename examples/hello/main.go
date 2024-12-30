@@ -26,7 +26,7 @@ func boot() {
 	game.SetData(gd)
 
 	// generate a random game map
-	game.SetMap(tinyrogue.NewGameMap())
+	game.SetMap(tinyrogue.NewSingleLevelGameMap())
 
 	// create the player
 	player := tinyrogue.NewPlayer("Player", "player", game.LoadImage("player"), 5)

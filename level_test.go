@@ -7,7 +7,7 @@ import (
 func TestLevel(t *testing.T) {
 	game := NewGame()
 	game.SetData(NewGameData(16, 10, 16, 16))
-	game.SetMap(NewGameMap())
+	game.SetMap(NewSingleLevelGameMap())
 
 	level := game.Map.CurrentLevel
 	if len(level.Rooms) == 0 {
