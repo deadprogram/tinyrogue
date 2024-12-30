@@ -26,14 +26,14 @@ Fun package for creating [roguelike games](https://en.wikipedia.org/wiki/Rogueli
 - Popup dialogs for messages e.g. "A wild gopher has appeared!"
 - Creature spawning
 - Automatic terrain image variation for walls and floors
+- Multiple dungeons each with multiple levels.
+- Portals aka level entrances/exits
 
 ### TODO
 
 - Game items
 - Predefined maps/levels
-- Multiple levels
 - World map
-- Level entrances/exits
 - ?
 
 ## Examples

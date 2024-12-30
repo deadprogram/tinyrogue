@@ -1,0 +1,12 @@
+author_id = "tinyrogue"
+app_id = "gopher-multiwalk"
+author_name = "tinyrogue"
+app_name = "Gopher Multiwalk"
+
+[files]
+forest = { path = "forest.png" }
+forest2 = { path = "forest2.png" }
+tree = { path = "tree.png" }
+tree2 = { path = "tree2.png" }
+player = { path = "gopher.png" }
+portal = { path = "portal.png" }
