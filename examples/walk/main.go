@@ -37,7 +37,7 @@ func boot() {
 	game.SetPlayer(player)
 
 	// set player initial position
-	player.MoveTo(findOpenLocation())
+	player.MoveTo(game.CurrentLevel().OpenLocation())
 }
 
 func update() {
@@ -46,14 +46,4 @@ func update() {
 
 func render() {
 	game.Render()
-}
-
-func findOpenLocation() tinyrogue.Position {
-	l := game.Map.CurrentLevel
-	for {
-		pos, free := l.RandomLocation()
-		if free {
-			return pos
-		}
-	}
 }

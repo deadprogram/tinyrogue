@@ -27,8 +27,8 @@ func boot() {
 	player := tinyrogue.NewPlayer("Player", "player", game.LoadImage("player"), 5)
 	game.SetPlayer(player)
 
-	// set player initial position
-	player.MoveTo(findOpenLocation())
+	// set player initial position to some open spot on the map.
+	player.MoveTo(game.CurrentLevel().OpenLocation())
 }
 
 func update() {
@@ -37,14 +37,4 @@ func update() {
 
 func render() {
 	game.Render()
-}
-
-func findOpenLocation() tinyrogue.Position {
-	l := game.Map.CurrentLevel
-	for {
-		pos, free := l.RandomLocation()
-		if free {
-			return pos
-		}
-	}
 }
