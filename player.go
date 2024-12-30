@@ -2,11 +2,13 @@ package tinyrogue
 
 import "github.com/firefly-zero/firefly-go/firefly"
 
+// Player represents the player character in the game.
 type Player struct {
 	*character
 	ViewRadius int
 }
 
+// NewPlayer creates a new Player and initializes the data.
 func NewPlayer(name string, kind string, img firefly.Image, speed int) *Player {
 	return &Player{
 		character: &character{
@@ -18,13 +20,16 @@ func NewPlayer(name string, kind string, img firefly.Image, speed int) *Player {
 	}
 }
 
+// IsVisible always returns true, because the player is always visible.
 func (p *Player) IsVisible() bool {
 	return true
 }
 
+// SetVisible is just here to fulfill [Character] interface.
 func (p *Player) SetVisible(visible bool) {
 }
 
+// Update updates the player.
 func (p *Player) Update() {
 	g := CurrentGame()
 	x, y := 0, 0

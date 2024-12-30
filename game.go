@@ -185,6 +185,7 @@ func (g *Game) ShowDialog(dlg *Dialog) {
 	g.currentDialog = dlg
 }
 
+// LoadImage loads an image and caches it for later use.
 func (g *Game) LoadImage(name string) firefly.Image {
 	img := firefly.LoadFile(name, nil).Image()
 	g.Images[name] = img
