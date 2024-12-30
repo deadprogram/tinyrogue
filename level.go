@@ -83,9 +83,7 @@ func (level *Level) createRoom(room Rect) {
 		for x := room.X1 + 1; x < room.X2; x++ {
 			index := level.GetIndexFromXY(x, y)
 			if index > 0 && index < len(level.Tiles) {
-				level.Tiles[index].Blocked = false
-				level.Tiles[index].TileType = FLOOR
-				level.Tiles[index].Image = level.getFloorImage()
+				level.setFloorTile(level.Tiles[index])
 			}
 		}
 	}
@@ -162,9 +160,7 @@ func (level *Level) createHorizontalTunnel(x1 int, x2 int, y int) {
 	for x := tinymath.Min(float32(x1), float32(x2)); x < tinymath.Max(float32(x1), float32(x2))+1; x++ {
 		index := level.GetIndexFromXY(int(x), y)
 		if index > 0 && index < gd.Rows*gd.Cols {
-			level.Tiles[index].Blocked = false
-			level.Tiles[index].TileType = FLOOR
-			level.Tiles[index].Image = level.getFloorImage()
+			level.setFloorTile(level.Tiles[index])
 		}
 	}
 }
@@ -175,11 +171,15 @@ func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
 	for y := tinymath.Min(float32(y1), float32(y2)); y < tinymath.Max(float32(y1), float32(y2))+1; y++ {
 		index := level.GetIndexFromXY(x, int(y))
 		if index > 0 && index < gd.Rows*gd.Cols {
-			level.Tiles[index].TileType = FLOOR
-			level.Tiles[index].Blocked = false
-			level.Tiles[index].Image = level.getFloorImage()
+			level.setFloorTile(level.Tiles[index])
 		}
 	}
+}
+
+func (level *Level) setFloorTile(tile *MapTile) {
+	tile.TileType = FLOOR
+	tile.Image = level.getFloorImage()
+	tile.Blocked = false
 }
 
 // InBounds checks if the given x and y coordinates are within the level bounds.
@@ -197,9 +197,9 @@ func (level *Level) IsOpaque(x, y int) bool {
 	return level.Tiles[idx].TileType == WALL
 }
 
-// Block sets the blocked property of a tile at the given x and y coordinates.
-func (level *Level) Block(x, y int, block bool) {
-	level.Tiles[level.GetIndexFromXY(x, y)].Blocked = block
+// Block sets the blocked property of a tile at the given [Position].
+func (level *Level) Block(pos Position, block bool) {
+	level.Tiles[level.GetIndexFromXY(pos.X, pos.Y)].Blocked = block
 }
 
 // Draw the level.

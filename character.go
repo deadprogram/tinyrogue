@@ -9,7 +9,7 @@ type Character interface {
 	SetImage(img firefly.Image)
 	GetSpeed() int
 	SetSpeed(speed int)
-	GetPosition() *Position
+	GetPosition() Position
 	Move(dx, dy int)
 	MoveTo(pos Position)
 	Draw()
@@ -53,8 +53,8 @@ func (c *character) SetSpeed(speed int) {
 }
 
 // GetPosition returns the position of the character.
-func (c *character) GetPosition() *Position {
-	return &c.pos
+func (c *character) GetPosition() Position {
+	return c.pos
 }
 
 // Move moves the character by the given amount.

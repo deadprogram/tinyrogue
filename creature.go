@@ -71,7 +71,7 @@ func (c *Creature) Approach() {
 			if len(path) > 1 {
 				nextTile := level.Tiles[level.GetIndexFromXY(path[1].X, path[1].Y)]
 				if !nextTile.Blocked {
-					level.Block(creaturePos.X, creaturePos.Y, false)
+					level.Block(creaturePos, false)
 
 					c.MoveTo(Position{X: path[1].X, Y: path[1].Y})
 					nextTile.Blocked = true

@@ -7,12 +7,12 @@ type Position struct {
 	Y int
 }
 
-func (p *Position) GetManhattanDistance(other *Position) int {
+func (p *Position) GetManhattanDistance(other Position) int {
 	xDist := tinymath.Abs(float32(p.X - other.X))
 	yDist := tinymath.Abs(float32(p.Y - other.Y))
 	return int(xDist) + int(yDist)
 }
 
-func (p *Position) IsEqual(other *Position) bool {
+func (p *Position) IsEqual(other Position) bool {
 	return (p.X == other.X && p.Y == other.Y)
 }

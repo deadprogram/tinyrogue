@@ -7,7 +7,7 @@ import (
 // Node represents a given point on a map
 type node struct {
 	Parent   *node
-	Position *Position
+	Position Position
 	g        int // Total distance of the node from the start
 	h        int // Estimated distance of the node from the ending
 	f        int // Total value of the node (g + h)
@@ -17,7 +17,7 @@ func (n *node) isEqual(other *node) bool {
 	return n.Position.IsEqual(other.Position)
 }
 
-func newNode(parent *node, position *Position) *node {
+func newNode(parent *node, position Position) *node {
 	n := node{}
 	n.Parent = parent
 	n.Position = position
@@ -42,7 +42,7 @@ type AStar struct{}
 
 // GetPath takes a level, the starting position and an ending position (the goal) and returns
 // a list of Positions which is the path between the points.
-func (as AStar) GetPath(level Level, start *Position, end *Position) []Position {
+func (as AStar) GetPath(level Level, start Position, end Position) []Position {
 	gd := CurrentGame().Data
 
 	openList := make([]*node, 0)
@@ -89,7 +89,7 @@ func (as AStar) GetPath(level Level, start *Position, end *Position) []Position 
 				if current == nil {
 					break
 				}
-				path = append(path, *current.Position)
+				path = append(path, current.Position)
 				current = current.Parent
 			}
 			//Reverse the Path and Return it
@@ -110,7 +110,7 @@ func (as AStar) GetPath(level Level, start *Position, end *Position) []Position 
 					X: currentNode.Position.X,
 					Y: currentNode.Position.Y - 1,
 				}
-				newNode := newNode(currentNode, &upNodePosition)
+				newNode := newNode(currentNode, upNodePosition)
 				edges = append(edges, newNode)
 
 			}
@@ -124,7 +124,7 @@ func (as AStar) GetPath(level Level, start *Position, end *Position) []Position 
 					X: currentNode.Position.X,
 					Y: currentNode.Position.Y + 1,
 				}
-				newNode := newNode(currentNode, &downNodePosition)
+				newNode := newNode(currentNode, downNodePosition)
 				edges = append(edges, newNode)
 
 			}
@@ -138,7 +138,7 @@ func (as AStar) GetPath(level Level, start *Position, end *Position) []Position 
 					X: currentNode.Position.X - 1,
 					Y: currentNode.Position.Y,
 				}
-				newNode := newNode(currentNode, &leftNodePosition)
+				newNode := newNode(currentNode, leftNodePosition)
 				edges = append(edges, newNode)
 
 			}
@@ -152,7 +152,7 @@ func (as AStar) GetPath(level Level, start *Position, end *Position) []Position 
 					X: currentNode.Position.X + 1,
 					Y: currentNode.Position.Y,
 				}
-				newNode := newNode(currentNode, &rightNodePosition)
+				newNode := newNode(currentNode, rightNodePosition)
 				edges = append(edges, newNode)
 
 			}

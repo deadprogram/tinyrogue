@@ -22,9 +22,9 @@ func TestAStar(t *testing.T) {
 
 	// Set the start and end points
 	x1, y1 := room1.Center()
-	start := &Position{x1, y1}
+	start := Position{x1, y1}
 	x2, y2 := room2.Center()
-	end := &Position{x2, y2}
+	end := Position{x2, y2}
 
 	// Create the AStar object
 	as := AStar{}
@@ -53,9 +53,9 @@ func TestAStar2(t *testing.T) {
 
 	// Set the start and end points
 	x1, y1 := room1.Center()
-	start := &Position{x1, y1}
+	start := Position{x1, y1}
 	x2, y2 := room2.Center()
-	end := &Position{x2, y2}
+	end := Position{x2, y2}
 
 	// Create the AStar object
 	as := AStar{}
