@@ -30,16 +30,21 @@ type MapTile struct {
 type Level struct {
 	Tiles      []*MapTile
 	Rooms      []Rect
+	FloorTypes string
+	WallTypes  string
 	playerFoV  *FieldOfVision
 	ViewRadius int
 }
 
 // NewLevel creates a new game level in a dungeon.
-func NewLevel() Level {
-	l := Level{}
-	rooms := make([]Rect, 0)
-	l.Rooms = rooms
-	l.GenerateLevelTiles()
+func NewLevel(floors, walls string) Level {
+	l := Level{
+		Rooms:      make([]Rect, 0),
+		FloorTypes: floors,
+		WallTypes:  walls,
+	}
+
+	// TODO: move this to player?
 	l.playerFoV = &FieldOfVision{}
 	l.playerFoV.InitializeFOV()
 
@@ -91,7 +96,7 @@ func (level *Level) createRoom(room Rect) {
 
 // getWallImage returns a random wall image from the list of wall images.
 func (level *Level) getWallImage() firefly.Image {
-	walls := strings.Split(CurrentGame().Data.WallTypes, ",")
+	walls := strings.Split(level.WallTypes, ",")
 	if len(walls) < 2 {
 		return CurrentGame().Images[walls[0]]
 	}
@@ -101,7 +106,7 @@ func (level *Level) getWallImage() firefly.Image {
 
 // getFloorImage returns a random floor image from the list of floor images.
 func (level *Level) getFloorImage() firefly.Image {
-	floors := strings.Split(CurrentGame().Data.FloorTypes, ",")
+	floors := strings.Split(level.FloorTypes, ",")
 	if len(floors) < 2 {
 		return CurrentGame().Images[floors[0]]
 	}
@@ -110,8 +115,8 @@ func (level *Level) getFloorImage() firefly.Image {
 	return CurrentGame().Images[floor]
 }
 
-// GenerateLevelTiles creates a new Dungeon Level Map.
-func (level *Level) GenerateLevelTiles() {
+// Generate creates a new Dungeon Level Map.
+func (level *Level) Generate() {
 	gd := CurrentGame().Data
 	tiles := level.createTiles()
 	level.Tiles = tiles

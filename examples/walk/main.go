@@ -22,14 +22,14 @@ func boot() {
 	game.LoadImage("tree2")
 
 	gd := tinyrogue.NewGameData(16, 10, 16, 16)
-	gd.FloorTypes = "forest,forest2"
-	gd.WallTypes = "tree,tree2"
 	gd.MinSize = 3
 	gd.MaxSize = 6
 	gd.MaxRooms = 36
-
 	game.SetData(gd)
-	game.SetMap(tinyrogue.NewGameMap())
+
+	floors := "forest,forest2"
+	walls := "tree,tree2"
+	game.SetMap(tinyrogue.NewSingleGameMapWithTerrain(floors, walls))
 
 	playerImage := game.LoadImage("player")
 	player := tinyrogue.NewPlayer("Player", "player", playerImage, 5)

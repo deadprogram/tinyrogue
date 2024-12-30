@@ -12,7 +12,7 @@ func TestAStar(t *testing.T) {
 	game.Images["wall"] = firefly.Image{}
 
 	game.SetData(NewGameData(16, 10, 16, 16))
-	game.SetMap(NewGameMap())
+	game.SetMap(NewSingleLevelGameMap())
 
 	level := game.Map.CurrentLevel
 	level.Dump()
@@ -43,7 +43,7 @@ func TestAStar2(t *testing.T) {
 	game.Images["wall"] = firefly.Image{}
 
 	game.SetData(NewGameData(32, 32, 16, 16))
-	game.SetMap(NewGameMap())
+	game.SetMap(NewSingleLevelGameMap())
 
 	level := game.Map.CurrentLevel
 	level.Dump()
