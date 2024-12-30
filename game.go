@@ -5,7 +5,7 @@ import "github.com/firefly-zero/firefly-go/firefly"
 // Game holds all data the entire game will need.
 type Game struct {
 	Debug bool
-	Map   GameMap
+	Map   *GameMap
 	Data  GameData
 
 	// TurnBased is a flag to determine if the game is turn based or real-time.
@@ -52,7 +52,7 @@ func NewGame() *Game {
 }
 
 // SetMap sets the map for the game.
-func (g *Game) SetMap(m GameMap) {
+func (g *Game) SetMap(m *GameMap) {
 	g.Map = m
 }
 
@@ -191,9 +191,9 @@ func (g *Game) ShowDialog(dlg *Dialog) {
 }
 
 // LoadImage loads an image and caches it for later use.
-func (g *Game) LoadImage(name string) firefly.Image {
+func (g *Game) LoadImage(name string) *firefly.Image {
 	img := firefly.LoadFile(name, nil).Image()
 	g.Images[name] = img
 
-	return img
+	return &img
 }

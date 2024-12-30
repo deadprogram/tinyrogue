@@ -6,7 +6,7 @@ import "github.com/firefly-zero/firefly-go/firefly"
 type Character interface {
 	Name() string
 	Kind() string
-	SetImage(img firefly.Image)
+	SetImage(img *firefly.Image)
 	GetSpeed() int
 	SetSpeed(speed int)
 	GetPosition() Position
@@ -22,7 +22,7 @@ type Character interface {
 type character struct {
 	name  string
 	kind  string
-	Image firefly.Image
+	Image *firefly.Image
 	pos   Position
 	speed int
 }
@@ -38,7 +38,7 @@ func (c *character) Kind() string {
 }
 
 // SetImage sets the image for the character.
-func (c *character) SetImage(img firefly.Image) {
+func (c *character) SetImage(img *firefly.Image) {
 	c.Image = img
 }
 
@@ -72,5 +72,5 @@ func (c *character) MoveTo(pos Position) {
 // Draw draws the character on the screen.
 func (c *character) Draw() {
 	gd := CurrentGame().Data
-	firefly.DrawImage(c.Image, firefly.Point{X: c.pos.X * gd.TileWidth, Y: c.pos.Y * gd.TileHeight})
+	firefly.DrawImage(*c.Image, firefly.Point{X: c.pos.X * gd.TileWidth, Y: c.pos.Y * gd.TileHeight})
 }

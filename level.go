@@ -13,14 +13,16 @@ type TileType int
 const (
 	WALL TileType = iota
 	FLOOR
+	ENTRANCE
+	EXIT
 )
 
 // Each of the map tiles will be represented  by one of these structures
 type MapTile struct {
 	PixelX   int // Upper left corner of the tile
 	PixelY   int
-	Blocked  bool          // tile should block the player or creatures?
-	Image    firefly.Image // image for this tile
+	Blocked  bool           // tile should block the player or creatures?
+	Image    *firefly.Image // image for this tile
 	Visible  bool
 	Explored bool
 	TileType TileType
@@ -33,11 +35,13 @@ type Level struct {
 	FloorTypes string
 	WallTypes  string
 	ViewRadius int
+	Entrance   *Portal
+	Exit       *Portal
 }
 
 // NewLevel creates a new game level in a dungeon.
-func NewLevel(floors, walls string) Level {
-	l := Level{
+func NewLevel(floors, walls string) *Level {
+	l := &Level{
 		Rooms:      make([]Rect, 0),
 		FloorTypes: floors,
 		WallTypes:  walls,
@@ -90,24 +94,28 @@ func (level *Level) createRoom(room Rect) {
 }
 
 // getWallImage returns a random wall image from the list of wall images.
-func (level *Level) getWallImage() firefly.Image {
+func (level *Level) getWallImage() *firefly.Image {
 	walls := strings.Split(level.WallTypes, ",")
 	if len(walls) < 2 {
-		return CurrentGame().Images[walls[0]]
+		img := CurrentGame().Images[walls[0]]
+		return &img
 	}
 	wall := walls[GetDiceRoll(len(walls))-1]
-	return CurrentGame().Images[wall]
+	img := CurrentGame().Images[wall]
+	return &img
 }
 
 // getFloorImage returns a random floor image from the list of floor images.
-func (level *Level) getFloorImage() firefly.Image {
+func (level *Level) getFloorImage() *firefly.Image {
 	floors := strings.Split(level.FloorTypes, ",")
 	if len(floors) < 2 {
-		return CurrentGame().Images[floors[0]]
+		img := CurrentGame().Images[floors[0]]
+		return &img
 	}
 
 	floor := floors[GetDiceRoll(len(floors))-1]
-	return CurrentGame().Images[floor]
+	img := CurrentGame().Images[floor]
+	return &img
 }
 
 // Generate creates a new Dungeon Level Map.
@@ -210,7 +218,7 @@ func (level *Level) Draw() {
 			idx := level.GetIndexFromXY(x, y)
 			tile := level.Tiles[idx]
 			if tile.Visible || tile.Explored || !CurrentGame().UseFOV {
-				firefly.DrawImage(tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
+				firefly.DrawImage(*tile.Image, firefly.Point{X: tile.PixelX, Y: tile.PixelY})
 			}
 		}
 	}
@@ -240,6 +248,44 @@ func (level *Level) OpenLocation() Position {
 	}
 }
 
+// SetEntrance sets the entrance to the level.
+func (level *Level) SetEntrance(p *Portal, pos Position) {
+	level.Entrance = p
+	tile := level.Tiles[level.GetIndexFromXY(pos.X, pos.Y)]
+	tile.TileType = ENTRANCE
+	tile.Image = p.Image
+}
+
+// GetEntrancePosition returns the position of the entrance for this level.
+func (level *Level) GetEntrancePosition() Position {
+	for i, tile := range level.Tiles {
+		if tile.TileType == ENTRANCE {
+			return Position{X: i % CurrentGame().Data.Cols, Y: i / CurrentGame().Data.Cols}
+		}
+	}
+	logDebug("No entrance found")
+	return Position{}
+}
+
+// SetExit sets the exit to the level.
+func (level *Level) SetExit(p *Portal, pos Position) {
+	level.Exit = p
+	tile := level.Tiles[level.GetIndexFromXY(pos.X, pos.Y)]
+	tile.TileType = EXIT
+	tile.Image = p.Image
+}
+
+// GetExitPosition returns the position of the exit for this level.
+func (level *Level) GetExitPosition() Position {
+	for i, tile := range level.Tiles {
+		if tile.TileType == EXIT {
+			return Position{X: i % CurrentGame().Data.Cols, Y: i / CurrentGame().Data.Cols}
+		}
+	}
+	logDebug("No exit found")
+	return Position{}
+}
+
 func (level *Level) GetRoom(x, y int) int {
 	for i, r := range level.Rooms {
 		if r.Contains(x, y) {
@@ -263,9 +309,12 @@ func (level *Level) Dump() {
 		for x := 0; x < gd.Cols; x++ {
 			idx := level.GetIndexFromXY(x, y)
 			tile := level.Tiles[idx]
-			if tile.TileType == WALL {
+			switch tile.TileType {
+			case WALL:
 				data += "#"
-			} else {
+			case ENTRANCE, EXIT:
+				data += "E"
+			default:
 				rm := level.GetRoom(x, y)
 				if rm == -1 {
 					data += "."
