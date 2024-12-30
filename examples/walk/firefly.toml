@@ -1,7 +1,7 @@
 author_id = "tinyrogue"
-app_id = "tinyrogue-hello"
+app_id = "gopher-walk"
 author_name = "tinyrogue"
-app_name = "Hello Gopher"
+app_name = "Gopher Walk"
 
 [files]
 forest = { path = "forest.png" }
