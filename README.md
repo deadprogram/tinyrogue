@@ -34,6 +34,7 @@ Fun package for creating [roguelike games](https://en.wikipedia.org/wiki/Rogueli
 - Game items
 - Predefined maps/levels
 - World map
+- Show/hide entrances/exits
 - ?
 
 ## Examples
