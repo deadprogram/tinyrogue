@@ -15,7 +15,7 @@ type FieldOfVision struct {
 }
 
 // viewIncrement is the number of degrees to increment the FOV by
-const viewIncrement = 30
+const viewIncrement = 1
 
 // InitializeFOV generates the cos and sin tables, for 360 degrees, for use when raycasting to determine line of sight
 func (f *FieldOfVision) InitializeFOV() {
