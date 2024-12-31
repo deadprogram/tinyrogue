@@ -174,14 +174,12 @@ func (level *Level) GenerateAndConnect(previousLevel *Level) {
 
 	// generate a entrance to this level in new level
 	portalImg := CurrentGame().Images["portal"]
-	p := NewPortal("portal", &portalImg, previousLevel)
-	level.SetEntrance(p, level.OpenLocation())
+	level.SetEntrance(NewPortal("portal", &portalImg, previousLevel), level.OpenLocation())
 
-	// level is not the last level, generate an exit from it
+	// if level is not the last level, generate an exit from it
 	nextLevel := CurrentGame().CurrentDungeon().NextLevel(level)
 	if nextLevel != nil {
-		p := NewPortal("portal", &portalImg, nextLevel)
-		level.SetExit(p, level.OpenLocation())
+		level.SetExit(NewPortal("portal", &portalImg, nextLevel), level.OpenLocation())
 	}
 }
 
@@ -258,7 +256,7 @@ func (level *Level) RandomLocation() (Position, bool) {
 	idx := level.GetIndexFromXY(x, y)
 	tile := level.Tiles[idx]
 
-	return Position{x, y}, !tile.Blocked
+	return Position{x, y}, !tile.Blocked && tile.TileType == FLOOR
 }
 
 // OpenLocation returns an open location in the level. Used for "spawning".
