@@ -9,7 +9,7 @@ func TestLevel(t *testing.T) {
 	game.SetData(NewGameData(16, 10, 16, 16))
 	game.SetMap(NewSingleLevelGameMap())
 
-	level := game.Map.CurrentLevel
+	level := game.CurrentLevel()
 	if len(level.Rooms) == 0 {
 		t.Error("failed to create rooms for level")
 	}
@@ -30,7 +30,7 @@ func TestMultiLevel(t *testing.T) {
 	gm := NewGeneratedGameMap("Big Forest", 1, 5, "floor", "wall")
 	game.SetMap(gm)
 
-	level := game.Map.CurrentLevel
+	level := game.CurrentLevel()
 	if len(level.Rooms) == 0 {
 		t.Error("failed to create rooms for level")
 	}

@@ -56,7 +56,7 @@ func (p *Player) Update() {
 	}
 
 	pos := g.Player.GetPosition()
-	level := g.Map.CurrentLevel
+	level := g.CurrentLevel()
 
 	if g.UseFOV {
 		p.fov.SetTorchRadius(p.ViewRadius)
@@ -79,10 +79,11 @@ func (p *Player) Update() {
 			if buttons.N || buttons.S || buttons.E || buttons.W {
 				logDebug("Entrance reached")
 				level.Block(pos, false)
-				// TODO: handle if is dungeon entrance
-				prevLevel := level.Entrance.Destination
-				p.MoveTo(prevLevel.GetExitPosition())
-				g.Map.CurrentLevel = prevLevel
+
+				destinationDungeon := level.Entrance.Dungeon()
+				destinationLevel := level.Entrance.Destination()
+				p.MoveTo(destinationLevel.GetExitPosition())
+				g.Map.SetCurrentLevel(destinationDungeon, destinationLevel)
 				p.levelSwitchDelay = 0
 
 				return
@@ -96,16 +97,20 @@ func (p *Player) Update() {
 			if buttons.N || buttons.S || buttons.E || buttons.W {
 				logDebug("Exit reached")
 				level.Block(pos, false)
-				// TODO: handle if is dungeon exit
+
+				destinationDungeon := level.Exit.Dungeon()
+				destinationLevel := level.Exit.Destination()
 
 				// generate a new level?
-				nextLevel := level.Exit.Destination
-				if !nextLevel.Generated {
-					nextLevel.GenerateAndConnect(level)
+				if !destinationLevel.Generated {
+					destinationLevel.Generate()
+
+					ConnectExits(g.CurrentDungeon(), level, destinationDungeon, destinationLevel)
 				}
 
-				p.MoveTo(nextLevel.GetEntrancePosition())
-				g.Map.CurrentLevel = nextLevel
+				p.MoveTo(destinationLevel.GetEntrancePosition())
+				g.Map.SetCurrentLevel(destinationDungeon, destinationLevel)
+
 				p.levelSwitchDelay = 0
 
 				return

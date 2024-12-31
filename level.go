@@ -30,6 +30,7 @@ type MapTile struct {
 
 // Level holds the tile information for a complete dungeon level.
 type Level struct {
+	Name       string
 	Generated  bool
 	Tiles      []*MapTile
 	Rooms      []Rect
@@ -41,8 +42,9 @@ type Level struct {
 }
 
 // NewLevel creates a new game level in a dungeon.
-func NewLevel(floors, walls string) *Level {
+func NewLevel(name, floors, walls string) *Level {
 	l := &Level{
+		Name:       name,
 		Rooms:      make([]Rect, 0),
 		FloorTypes: floors,
 		WallTypes:  walls,
@@ -169,18 +171,29 @@ func (level *Level) Generate() {
 	logDebug("Total rooms created: " + strconv.Itoa(len(level.Rooms)))
 }
 
-func (level *Level) GenerateAndConnect(previousLevel *Level) {
-	level.Generate()
-
-	// generate a entrance to this level in new level
+func ConnectExits(startDungeon *Dungeon, startLevel *Level, destinationDungeon *Dungeon, destinationLevel *Level) {
 	portalImg := CurrentGame().Images["portal"]
-	level.SetEntrance(NewPortal("portal", &portalImg, previousLevel), level.OpenLocation())
+	p := NewPortal("portal", &portalImg, startDungeon, startLevel)
+	destinationLevel.SetEntrance(p, destinationLevel.OpenLocation())
 
-	// if level is not the last level, generate an exit from it
-	nextLevel := CurrentGame().CurrentDungeon().NextLevel(level)
-	if nextLevel != nil {
-		level.SetExit(NewPortal("portal", &portalImg, nextLevel), level.OpenLocation())
+	// what is the destination level exit?
+	nextLevel := destinationDungeon.NextLevel(destinationLevel)
+	if nextLevel == nil {
+		nextDungeon := CurrentGame().Map.NextDungeon()
+		if nextDungeon == nil {
+			// end of the game?
+			logDebug("End of the game reached.")
+			return
+		}
+
+		// to another dungeon, first level
+		p = NewPortal("portal", &portalImg, nextDungeon, nextDungeon.Levels[0])
+		destinationLevel.SetExit(p, destinationLevel.OpenLocation())
+		return
 	}
+
+	p = NewPortal("portal", &portalImg, destinationDungeon, nextLevel)
+	destinationLevel.SetExit(p, destinationLevel.OpenLocation())
 }
 
 // createHorizontalTunnel creates a horizontal tunnel between two points.
@@ -267,13 +280,6 @@ func (level *Level) OpenLocation() Position {
 			return pos
 		}
 	}
-}
-
-// ConnectLevels connects two levels with a portal.
-func ConnectLevels(from, to *Level, fromPos Position, toPos Position) {
-	portalImg := CurrentGame().Images["portal"]
-	from.SetExit(NewPortal("portal", &portalImg, to), fromPos)
-	to.SetEntrance(NewPortal("portal", &portalImg, from), toPos)
 }
 
 // SetEntrance sets the entrance to the level.

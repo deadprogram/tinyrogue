@@ -135,7 +135,7 @@ func (g *Game) Render() {
 	firefly.ClearScreen(firefly.ColorBlack)
 
 	// Draw the Map
-	g.Map.CurrentLevel.Draw()
+	g.CurrentLevel().Draw()
 
 	// Draw the player
 	g.Player.Draw()
@@ -165,12 +165,12 @@ func CurrentGame() *Game {
 
 // CurrentDungeon returns the current Dungeon for game.
 func (g *Game) CurrentDungeon() *Dungeon {
-	return g.Map.CurrentDungeon
+	return g.Map.Dungeon(g.Map.CurrentDungeon)
 }
 
 // CurrentLevel returns the current level for game.
 func (g *Game) CurrentLevel() *Level {
-	return g.Map.CurrentLevel
+	return g.Map.Dungeon(g.Map.CurrentDungeon).Level(g.Map.CurrentLevel)
 }
 
 // GetCreatureForTile returns the creature for the given tile index.
