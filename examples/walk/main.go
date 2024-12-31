@@ -31,8 +31,7 @@ func boot() {
 	walls := "tree,tree2"
 	game.SetMap(tinyrogue.NewSingleGameMapWithTerrain(floors, walls))
 
-	playerImage := game.LoadImage("player")
-	player := tinyrogue.NewPlayer("Player", "player", playerImage, 5)
+	player := tinyrogue.NewPlayer("Player", "player", game.LoadImage("player"), 5)
 
 	game.SetPlayer(player)
 

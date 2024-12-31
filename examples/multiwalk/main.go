@@ -34,9 +34,8 @@ func boot() {
 	gm := tinyrogue.NewGeneratedGameMap("Big Forest", 1, 10, floors, walls)
 	game.SetMap(gm)
 
-	playerImage := game.LoadImage("player")
-	player := tinyrogue.NewPlayer("Player", "player", playerImage, 5)
-	player.ViewRadius = 34
+	player := tinyrogue.NewPlayer("Player", "player", game.LoadImage("player"), 5)
+	player.ViewRadius = 3
 
 	game.SetPlayer(player)
 
