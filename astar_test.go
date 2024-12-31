@@ -14,7 +14,7 @@ func TestAStar(t *testing.T) {
 	game.SetData(NewGameData(16, 10, 16, 16))
 	game.SetMap(NewSingleLevelGameMap())
 
-	level := game.Map.CurrentLevel
+	level := game.CurrentLevel()
 	level.Dump()
 
 	room1 := level.Rooms[0]
@@ -45,7 +45,7 @@ func TestAStar2(t *testing.T) {
 	game.SetData(NewGameData(32, 32, 16, 16))
 	game.SetMap(NewSingleLevelGameMap())
 
-	level := game.Map.CurrentLevel
+	level := game.CurrentLevel()
 	level.Dump()
 
 	room1 := level.Rooms[0]

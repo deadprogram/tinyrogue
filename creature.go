@@ -56,7 +56,7 @@ func (c *Creature) Update() {
 
 // Approach moves the creature towards the player.
 func (c *Creature) Approach() {
-	level := CurrentGame().Map.CurrentLevel
+	level := CurrentGame().CurrentLevel()
 	playerPosition := CurrentGame().Player.GetPosition()
 	creaturePos := c.GetPosition()
 
