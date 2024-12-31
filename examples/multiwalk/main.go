@@ -31,7 +31,7 @@ func boot() {
 
 	floors := "forest,forest2"
 	walls := "tree,tree2"
-	gm := tinyrogue.NewGeneratedGameMap("Big Forest", 1, 5, floors, walls)
+	gm := tinyrogue.NewGeneratedGameMap("Big Forest", 1, 10, floors, walls)
 	game.SetMap(gm)
 
 	playerImage := game.LoadImage("player")
