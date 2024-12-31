@@ -30,6 +30,7 @@ type MapTile struct {
 
 // Level holds the tile information for a complete dungeon level.
 type Level struct {
+	Generated  bool
 	Tiles      []*MapTile
 	Rooms      []Rect
 	FloorTypes string
@@ -120,6 +121,10 @@ func (level *Level) getFloorImage() *firefly.Image {
 
 // Generate creates a new Dungeon Level Map.
 func (level *Level) Generate() {
+	if level.Generated {
+		return
+	}
+
 	gd := CurrentGame().Data
 	tiles := level.createTiles()
 	level.Tiles = tiles
@@ -159,7 +164,25 @@ func (level *Level) Generate() {
 			contains_rooms = true
 		}
 	}
+
+	level.Generated = true
 	logDebug("Total rooms created: " + strconv.Itoa(len(level.Rooms)))
+}
+
+func (level *Level) GenerateAndConnect(previousLevel *Level) {
+	level.Generate()
+
+	// generate a entrance to this level in new level
+	portalImg := CurrentGame().Images["portal"]
+	p := NewPortal("portal", &portalImg, previousLevel)
+	level.SetEntrance(p, level.OpenLocation())
+
+	// level is not the last level, generate an exit from it
+	nextLevel := CurrentGame().CurrentDungeon().NextLevel(level)
+	if nextLevel != nil {
+		p := NewPortal("portal", &portalImg, nextLevel)
+		level.SetExit(p, level.OpenLocation())
+	}
 }
 
 // createHorizontalTunnel creates a horizontal tunnel between two points.
@@ -246,6 +269,13 @@ func (level *Level) OpenLocation() Position {
 			return pos
 		}
 	}
+}
+
+// ConnectLevels connects two levels with a portal.
+func ConnectLevels(from, to *Level, fromPos Position, toPos Position) {
+	portalImg := CurrentGame().Images["portal"]
+	from.SetExit(NewPortal("portal", &portalImg, to), fromPos)
+	to.SetEntrance(NewPortal("portal", &portalImg, from), toPos)
 }
 
 // SetEntrance sets the entrance to the level.

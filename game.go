@@ -163,6 +163,11 @@ func CurrentGame() *Game {
 	return currentGame
 }
 
+// CurrentDungeon returns the current Dungeon for game.
+func (g *Game) CurrentDungeon() *Dungeon {
+	return g.Map.CurrentDungeon
+}
+
 // CurrentLevel returns the current level for game.
 func (g *Game) CurrentLevel() *Level {
 	return g.Map.CurrentLevel

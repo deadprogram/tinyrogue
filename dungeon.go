@@ -17,3 +17,15 @@ func NewDungeon(name, floors, walls string) Dungeon {
 		WallTypes:  walls,
 	}
 }
+
+// NextLevel returns the next level in the dungeon after the given level.
+func (d *Dungeon) NextLevel(l *Level) *Level {
+	for i, level := range d.Levels {
+		if level == l {
+			if i+1 < len(d.Levels) {
+				return d.Levels[i+1]
+			}
+		}
+	}
+	return nil
+}
