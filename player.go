@@ -80,9 +80,9 @@ func (p *Player) Update() {
 				logDebug("Entrance reached")
 				level.Block(pos, false)
 				// TODO: handle if is dungeon entrance
-
-				p.MoveTo(level.Entrance.Destination.GetExitPosition())
-				g.Map.CurrentLevel = level.Entrance.Destination
+				prevLevel := level.Entrance.Destination
+				p.MoveTo(prevLevel.GetExitPosition())
+				g.Map.CurrentLevel = prevLevel
 				p.levelSwitchDelay = 0
 
 				return
@@ -98,8 +98,14 @@ func (p *Player) Update() {
 				level.Block(pos, false)
 				// TODO: handle if is dungeon exit
 
-				p.MoveTo(level.Exit.Destination.GetEntrancePosition())
-				g.Map.CurrentLevel = level.Exit.Destination
+				// generate a new level?
+				nextLevel := level.Exit.Destination
+				if !nextLevel.Generated {
+					nextLevel.GenerateAndConnect(level)
+				}
+
+				p.MoveTo(nextLevel.GetEntrancePosition())
+				g.Map.CurrentLevel = nextLevel
 				p.levelSwitchDelay = 0
 
 				return
