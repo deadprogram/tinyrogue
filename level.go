@@ -171,6 +171,8 @@ func (level *Level) Generate() {
 	logDebug("Total rooms created: " + strconv.Itoa(len(level.Rooms)))
 }
 
+// ConnectExits connects the exits of two levels. Should only be called
+// after both the startLevel and destinationLevel have been generated.
 func ConnectExits(startDungeon *Dungeon, startLevel *Level, destinationDungeon *Dungeon, destinationLevel *Level) {
 	portalImg := CurrentGame().Images["portal"]
 	p := NewPortal("portal", &portalImg, startDungeon, startLevel)
@@ -179,7 +181,7 @@ func ConnectExits(startDungeon *Dungeon, startLevel *Level, destinationDungeon *
 	// what is the destination level exit?
 	nextLevel := destinationDungeon.NextLevel(destinationLevel)
 	if nextLevel == nil {
-		nextDungeon := CurrentGame().Map.NextDungeon()
+		nextDungeon := CurrentGame().NextDungeon()
 		if nextDungeon == nil {
 			// end of the game?
 			logDebug("End of the game reached.")
