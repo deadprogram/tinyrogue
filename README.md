@@ -35,6 +35,7 @@ Fun package for creating [roguelike games](https://en.wikipedia.org/wiki/Rogueli
 - Predefined maps/levels
 - World map
 - Show/hide entrances/exits
+- PortalTypes per dungeon
 - ?
 
 ## Examples
@@ -90,13 +91,19 @@ func render() {
 ```
 The code for this is located at [Hello, Gopher](./examples/hello/)
 
-For slightly more complex behavior, see the "Gopher Walk" game located here:
+### More examples
 
-[Gopher Walk](./examples/walk/)
+- For slightly more complex behavior, see the "Gopher Walk" game located here: [Gopher Walk](./examples/walk/)
 
-A complete game is "Ghost Castle" located here:
+- An example that has multiple Levels: [Gopher Multiwalk](./examples/multiwalk/)
 
-https://github.com/deadprogram/ghost-castle
+- Example that has multiple Dungeons/Levels: [Gopher Multidungeon](./examples/multidungeon/)
+
+### Complete Games
+
+A complete game is "Ghost Castle" located in this repo: https://github.com/deadprogram/ghost-castle
+
+"Ghost Castle" is in the Firefly Zero catalog here: https://catalog.fireflyzero.com/deadprogram.ghost-castle
 
 ## Architecture diagram
 
