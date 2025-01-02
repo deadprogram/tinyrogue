@@ -19,11 +19,7 @@ func boot() {
 	game = tinyrogue.NewGame()
 	game.UseFOV = true
 
-	game.LoadImage("forest")
-	game.LoadImage("forest2")
-	game.LoadImage("tree")
-	game.LoadImage("tree2")
-	portalImg := game.LoadImage("portal")
+	game.LoadImages("forest", "forest2", "tree", "tree2")
 
 	gd := tinyrogue.NewGameData(16, 10, 16, 16)
 	gd.MinSize = 3
@@ -34,7 +30,8 @@ func boot() {
 	floors := []string{"forest", "forest2"}
 	walls := []string{"tree", "tree2"}
 
-	name := "Dungeon-"
+	// create a few dungeons
+	name := "Forest-"
 	dungeons := make([]tinyrogue.Dungeon, 0)
 	for i := 0; i < 4; i++ {
 		d := tinyrogue.NewDungeon(name+"-"+strconv.Itoa(i), floors[i%2], walls[i%2])
@@ -46,11 +43,15 @@ func boot() {
 	}
 
 	// generate the first level of the first dungeon
-	dungeons[0].Levels[0].Generate()
-	p := tinyrogue.NewPortal("portal", portalImg, &dungeons[0], dungeons[0].Levels[1])
-	dungeons[0].Levels[0].SetExit(p, dungeons[0].Levels[0].OpenLocation())
+	firstDungeon := &dungeons[0]
+	firstLevel := firstDungeon.Levels[0]
+	firstLevel.Generate()
 
-	gm := tinyrogue.NewGameMap("Big World", dungeons, dungeons[0].Name, dungeons[0].Levels[0].Name)
+	// put exit on first level to second level
+	p := tinyrogue.NewPortal("portal", game.LoadImage("portal"), firstDungeon, firstDungeon.NextLevel(firstLevel))
+	firstLevel.SetExit(p, firstLevel.OpenLocation())
+
+	gm := tinyrogue.NewGameMap("Big World", dungeons, firstDungeon.Name, firstLevel.Name)
 	game.SetMap(gm)
 
 	player := tinyrogue.NewPlayer("Player", "player", game.LoadImage("player"), 5)
