@@ -16,10 +16,7 @@ var game *tinyrogue.Game
 func boot() {
 	game = tinyrogue.NewGame()
 
-	game.LoadImage("forest")
-	game.LoadImage("forest2")
-	game.LoadImage("tree")
-	game.LoadImage("tree2")
+	game.LoadImages("forest", "forest2", "tree", "tree2")
 
 	gd := tinyrogue.NewGameData(16, 10, 16, 16)
 	gd.MinSize = 3

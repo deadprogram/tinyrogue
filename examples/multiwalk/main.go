@@ -17,11 +17,7 @@ func boot() {
 	game = tinyrogue.NewGame()
 	game.UseFOV = true
 
-	game.LoadImage("forest")
-	game.LoadImage("forest2")
-	game.LoadImage("tree")
-	game.LoadImage("tree2")
-	game.LoadImage("portal")
+	game.LoadImages("forest", "forest2", "tree", "tree2", "portal")
 
 	gd := tinyrogue.NewGameData(16, 10, 16, 16)
 	gd.MinSize = 3
