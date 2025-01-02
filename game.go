@@ -168,6 +168,11 @@ func (g *Game) CurrentDungeon() *Dungeon {
 	return g.Map.Dungeon(g.Map.CurrentDungeon)
 }
 
+// NextDungeon returns the next Dungeon for game.
+func (g *Game) NextDungeon() *Dungeon {
+	return g.Map.NextDungeon()
+}
+
 // CurrentLevel returns the current level for game.
 func (g *Game) CurrentLevel() *Level {
 	return g.Map.Dungeon(g.Map.CurrentDungeon).Level(g.Map.CurrentLevel)
@@ -195,10 +200,18 @@ func (g *Game) ShowDialog(dlg *Dialog) {
 	g.currentDialog = dlg
 }
 
-// LoadImage loads an image and caches it for later use.
+// LoadImage loads a single image and caches it for later use.
+// It returns a pointer to the image.
 func (g *Game) LoadImage(name string) *firefly.Image {
 	img := firefly.LoadFile(name, nil).Image()
 	g.Images[name] = img
 
 	return &img
+}
+
+// LoadImages loads a list of image and caches them for later use.
+func (g *Game) LoadImages(names ...string) {
+	for _, name := range names {
+		g.LoadImage(name)
+	}
 }

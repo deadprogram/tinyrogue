@@ -6,8 +6,8 @@ import "strconv"
 type GameMap struct {
 	Name           string
 	Dungeons       []Dungeon
-	CurrentDungeon string //*Dungeon
-	CurrentLevel   string //*Level
+	CurrentDungeon string
+	CurrentLevel   string
 }
 
 // NewGameMap creates a new set of maps for the entire game
@@ -35,16 +35,18 @@ func NewGeneratedGameMap(name string, dungeonCount int, levelCount int, floors, 
 	logDebug("Total dungeons created: " + strconv.Itoa(len(dungeons)))
 
 	// generate the first level of the first dungeon
-	dungeons[0].Levels[0].Generate()
+	firstDungeon := &dungeons[0]
+	firstLevel := firstDungeon.Levels[0]
+	firstLevel.Generate()
 
 	// put exit on first level to second level
 	if levelCount > 1 {
 		portalImg := CurrentGame().Images["portal"]
-		p := NewPortal("portal", &portalImg, &dungeons[0], dungeons[0].Levels[1])
-		dungeons[0].Levels[0].SetExit(p, dungeons[0].Levels[0].OpenLocation())
+		p := NewPortal("portal", &portalImg, firstDungeon, firstDungeon.NextLevel(firstLevel))
+		firstLevel.SetExit(p, firstLevel.OpenLocation())
 	}
 
-	return &GameMap{Name: name, Dungeons: dungeons, CurrentDungeon: dungeons[0].Name, CurrentLevel: dungeons[0].Levels[0].Name}
+	return &GameMap{Name: name, Dungeons: dungeons, CurrentDungeon: firstDungeon.Name, CurrentLevel: firstLevel.Name}
 }
 
 // NewSingleGameMap creates a single level generated game map.
@@ -57,6 +59,7 @@ func NewSingleGameMapWithTerrain(floors, walls string) *GameMap {
 	return NewGeneratedGameMap("Dungeon", 1, 1, floors, walls)
 }
 
+// Dungeon returns a Dungeon by name.
 func (gm *GameMap) Dungeon(name string) *Dungeon {
 	for _, d := range gm.Dungeons {
 		if d.Name == name {
@@ -66,6 +69,7 @@ func (gm *GameMap) Dungeon(name string) *Dungeon {
 	return nil
 }
 
+// NextDungeon returns the next Dungeon in the list.
 func (gm *GameMap) NextDungeon() *Dungeon {
 	for i, d := range gm.Dungeons {
 		if d.Name == gm.CurrentDungeon {
@@ -77,6 +81,7 @@ func (gm *GameMap) NextDungeon() *Dungeon {
 	return nil
 }
 
+// SetCurrentLevel sets the current Dungeon and Level in the game map.
 func (gm *GameMap) SetCurrentLevel(d *Dungeon, l *Level) {
 	gm.CurrentDungeon = d.Name
 	gm.CurrentLevel = l.Name
