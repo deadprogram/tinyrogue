@@ -176,8 +176,11 @@ func (level *Level) Generate() {
 // after both the startLevel and destinationLevel have been generated.
 func ConnectExits(startDungeon *Dungeon, startLevel *Level, destinationDungeon *Dungeon, destinationLevel *Level) {
 	portalImg := CurrentGame().Images["portal"]
+
+	// Place entrance at an open location
+	entrancePos := destinationLevel.OpenLocation()
 	p := NewPortal("portal", &portalImg, startDungeon, startLevel)
-	destinationLevel.SetEntrance(p, destinationLevel.OpenLocation())
+	destinationLevel.SetEntrance(p, entrancePos)
 
 	// what is the destination level exit?
 	nextLevel := destinationDungeon.NextLevel(destinationLevel)
@@ -191,12 +194,14 @@ func ConnectExits(startDungeon *Dungeon, startLevel *Level, destinationDungeon *
 
 		// to another dungeon, first level
 		p = NewPortal("portal", &portalImg, nextDungeon, nextDungeon.Levels[0])
-		destinationLevel.SetExit(p, destinationLevel.OpenLocation())
+		exitPos := destinationLevel.OpenLocationReachableFrom(entrancePos)
+		destinationLevel.SetExit(p, exitPos)
 		return
 	}
 
 	p = NewPortal("portal", &portalImg, destinationDungeon, nextLevel)
-	destinationLevel.SetExit(p, destinationLevel.OpenLocation())
+	exitPos := destinationLevel.OpenLocationReachableFrom(entrancePos)
+	destinationLevel.SetExit(p, exitPos)
 }
 
 // createHorizontalTunnel creates a horizontal tunnel between two points.
@@ -285,12 +290,51 @@ func (level *Level) OpenLocation() Position {
 	}
 }
 
+// OpenLocationReachableFrom returns an open location that is reachable from the given position.
+// This ensures there is a valid path between the two positions.
+func (level *Level) OpenLocationReachableFrom(from Position) Position {
+	as := AStar{}
+	maxAttempts := 100
+
+	for i := 0; i < maxAttempts; i++ {
+		pos, free := level.RandomLocation()
+		if !free {
+			continue
+		}
+
+		// Check if there's a path from 'from' to this position
+		path := as.GetPath(level, from, pos)
+		if len(path) > 0 {
+			return pos
+		}
+	}
+
+	// Fallback: return first reachable floor tile
+	for _, tile := range level.Tiles {
+		if tile.TileType == FLOOR && !tile.Blocked {
+			pos := Position{
+				X: tile.PixelX / CurrentGame().Data.TileWidth,
+				Y: tile.PixelY / CurrentGame().Data.TileHeight,
+			}
+			path := as.GetPath(level, from, pos)
+			if len(path) > 0 {
+				return pos
+			}
+		}
+	}
+
+	// Last resort: return the from position itself
+	logError("Could not find reachable location, returning start position")
+	return from
+}
+
 // SetEntrance sets the entrance to the level.
 func (level *Level) SetEntrance(p *Portal, pos Position) {
 	level.Entrance = p
 	tile := level.Tiles[level.GetIndexFromXY(pos.X, pos.Y)]
 	tile.TileType = ENTRANCE
 	tile.Image = p.Image
+	tile.Blocked = false
 }
 
 // GetEntrancePosition returns the position of the entrance for this level.
@@ -310,6 +354,7 @@ func (level *Level) SetExit(p *Portal, pos Position) {
 	tile := level.Tiles[level.GetIndexFromXY(pos.X, pos.Y)]
 	tile.TileType = EXIT
 	tile.Image = p.Image
+	tile.Blocked = false
 }
 
 // GetExitPosition returns the position of the exit for this level.
