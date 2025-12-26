@@ -43,7 +43,12 @@ func NewGeneratedGameMap(name string, dungeonCount int, levelCount int, floors, 
 	if levelCount > 1 {
 		portalImg := CurrentGame().Images["portal"]
 		p := NewPortal("portal", &portalImg, firstDungeon, firstDungeon.NextLevel(firstLevel))
-		firstLevel.SetExit(p, firstLevel.OpenLocation())
+
+		// Get a starting position first (where player would spawn)
+		startPos := firstLevel.OpenLocation()
+		// Place exit at a location reachable from start
+		exitPos := firstLevel.OpenLocationReachableFrom(startPos)
+		firstLevel.SetExit(p, exitPos)
 	}
 
 	return &GameMap{Name: name, Dungeons: dungeons, CurrentDungeon: firstDungeon.Name, CurrentLevel: firstLevel.Name}
