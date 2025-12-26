@@ -22,11 +22,13 @@ func NewPortal(pt string, img *firefly.Image, dungeon *Dungeon, destination *Lev
 	}
 }
 
+// Dungeon returns the Dungeon this portal is in.
 func (p *Portal) Dungeon() *Dungeon {
 	logDebug("Portal.Dungeon: " + p.DungeonName)
 	return CurrentGame().Map.Dungeon(p.DungeonName)
 }
 
+// Destination returns the Level this portal leads to.
 func (p *Portal) Destination() *Level {
 	logDebug("Portal.Destination: " + p.DestinationName)
 	return CurrentGame().Map.Dungeon(p.DungeonName).Level(p.DestinationName)

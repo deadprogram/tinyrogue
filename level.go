@@ -8,6 +8,7 @@ import (
 	"github.com/orsinium-labs/tinymath"
 )
 
+// TileType represents a type of tile in the level.
 type TileType int
 
 const (
@@ -17,7 +18,7 @@ const (
 	EXIT
 )
 
-// Each of the map tiles will be represented  by one of these structures
+// Each of the map tiles will be represented by one of these structures
 type MapTile struct {
 	PixelX   int // Upper left corner of the tile
 	PixelY   int
