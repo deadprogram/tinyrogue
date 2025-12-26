@@ -11,6 +11,7 @@ type Dungeon struct {
 	WallTypes  string
 }
 
+// NewDungeon creates a new Dungeon with the given name.
 func NewDungeon(name, floors, walls string) Dungeon {
 	return Dungeon{
 		Name:       name,
@@ -41,6 +42,7 @@ func (d *Dungeon) CreateLevels(n int) {
 	}
 }
 
+// Level returns a Level by name.
 func (d *Dungeon) Level(name string) *Level {
 	for _, level := range d.Levels {
 		if level.Name == name {
