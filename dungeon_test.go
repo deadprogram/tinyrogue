@@ -68,7 +68,7 @@ func TestDungeonLevel(t *testing.T) {
 	// Find existing level
 	level := d.Level("TestDungeon-1")
 	if level == nil {
-		t.Error("expected to find level 'TestDungeon-1'")
+		t.Fatal("expected to find level 'TestDungeon-1'")
 	}
 	if level.Name != "TestDungeon-1" {
 		t.Errorf("expected level name 'TestDungeon-1', got '%s'", level.Name)
@@ -88,7 +88,7 @@ func TestDungeonNextLevel(t *testing.T) {
 	// Get next level from first
 	nextLevel := d.NextLevel(d.Levels[0])
 	if nextLevel == nil {
-		t.Error("expected next level to exist")
+		t.Fatal("expected next level to exist")
 	}
 	if nextLevel.Name != "TestDungeon-1" {
 		t.Errorf("expected next level 'TestDungeon-1', got '%s'", nextLevel.Name)
@@ -97,7 +97,7 @@ func TestDungeonNextLevel(t *testing.T) {
 	// Get next level from second
 	nextLevel = d.NextLevel(d.Levels[1])
 	if nextLevel == nil {
-		t.Error("expected next level to exist")
+		t.Fatal("expected next level to exist")
 	}
 	if nextLevel.Name != "TestDungeon-2" {
 		t.Errorf("expected next level 'TestDungeon-2', got '%s'", nextLevel.Name)
