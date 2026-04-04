@@ -44,14 +44,14 @@ func (p *Player) Update() {
 	x, y := 0, 0
 
 	pad, _ := firefly.ReadPad(firefly.Combined)
-	switch {
-	case pad.DPad().Down:
+	switch pad.DPad4() {
+	case firefly.DPad4Down:
 		y = -1
-	case pad.DPad().Up:
+	case firefly.DPad4Up:
 		y = 1
-	case pad.DPad().Right:
+	case firefly.DPad4Right:
 		x = 1
-	case pad.DPad().Left:
+	case firefly.DPad4Left:
 		x = -1
 	}
 

@@ -45,7 +45,7 @@ func (d *Dialog) Update() {
 				d.Confirmed = true
 			}
 			pad, _ := firefly.ReadPad(firefly.Combined)
-			if pad.DPad().Down || pad.DPad().Up || pad.DPad().Right || pad.DPad().Left {
+			if pad.DPad4().Any() {
 				d.Confirmed = true
 			}
 		}
